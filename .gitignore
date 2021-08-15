@@ -56,3 +56,4 @@ CMakeLists.txt
 .idea
 cmake-build-debug
 .idea/vcs.xml
+.DS_Store
