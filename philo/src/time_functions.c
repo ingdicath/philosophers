@@ -22,6 +22,16 @@ void	fix_sleep_accuracy(unsigned long time_to_sleep)
 		usleep(100);
 }
 
+void action_time(int action_time)
+{
+	unsigned long start_sleep;
+
+	start_sleep = get_time_millisec();
+	while((get_time_millisec() - start_sleep) < (unsigned)action_time)
+		usleep(10);
+}
+
+
 // for usleep() inaccuracy
 //static void    stupid_sleep(unsigned long ms)
 //{

@@ -32,9 +32,10 @@ typedef struct s_input
 typedef struct s_philosopher
 {
 	int					id;
+	unsigned long		eating_start_time;
 	t_status			status;
-	struct timeval		eating_start_time;
 	pthread_t			thread;
+	t_input				input;
 
 }				t_philosopher;
 
@@ -62,7 +63,7 @@ void			set_input(t_input *input, char **argv);
  * ------------------ philo functions ------------------------------
  */
 
-t_philosopher	*create_philosopher(int id, struct timeval eating_start_time);
+t_philosopher	*create_philosopher(int id, unsigned long eating_start_time);
 t_node			*create_node(t_philosopher *philosopher);
 t_node			*add_philosopher(t_node **head, t_philosopher *philosopher);
 void			*start_simulation(void *arg);
@@ -72,6 +73,7 @@ void			*start_simulation(void *arg);
 
 unsigned long	get_time_millisec(void);
 void			fix_sleep_accuracy(unsigned long time_to_sleep);
+void			action_time(int action_time);
 
 /*
  * ------------------ Utils --------------------------------------

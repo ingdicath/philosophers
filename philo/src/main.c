@@ -4,7 +4,7 @@
 
 #include "../includes/philosophers.h"
 
-t_philosopher	*create_philosopher(int id, struct timeval eating_start_time) //revisar si es necesario incluir mutex para fork
+t_philosopher	*create_philosopher(int id, unsigned long eating_start_time) //revisar si es necesario incluir mutex para fork
 {
 	t_philosopher	*new_philo;
 
@@ -17,7 +17,6 @@ t_philosopher	*create_philosopher(int id, struct timeval eating_start_time) //re
 	new_philo->id = id;
 	new_philo->status = THINKING;
 	new_philo->eating_start_time = eating_start_time;
-//	pthread_mutex_init(&new_philo->fork, NULL);
 	return (new_philo);
 }
 
@@ -32,6 +31,7 @@ t_node	*create_node(t_philosopher *philosopher)
 		return (NULL);
 	}
 	new_node->philosopher = philosopher;
+	pthread_mutex_init(new_node->fork, NULL);
 	new_node->prev = NULL;
 	new_node->next = NULL;
 	return (new_node);
@@ -71,17 +71,16 @@ int	build_philo_table(t_input input, t_node **table)
 {
 	int				i;
 	t_philosopher	*philosopher;
-	t_node			*philosopher_node;
-	struct timeval	initial_time;
+	t_node			*seat;
+	unsigned long	initial_time;
 
 	i = 1;
-	gettimeofday(&initial_time, NULL);
+	initial_time = get_time_millisec();
 	while (i <= input.number_of_philosophers)
 	{
 		philosopher = create_philosopher(i, initial_time);
-		philosopher_node = add_philosopher(table, philosopher);
-		pthread_create(&philosopher->thread, NULL, start_simulation,
-			&philosopher_node);
+		seat = add_philosopher(table, philosopher);
+		pthread_create(&philosopher->thread, NULL, start_simulation, &seat);
 		i++;
 	}
 	return (1);
