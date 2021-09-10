@@ -4,7 +4,7 @@
 
 #include "../includes/philosophers.h"
 
-t_philosopher	*create_philosopher(int id, unsigned long eating_start_time) //revisar si es necesario incluir mutex para fork
+t_philosopher	*create_philosopher(int id, t_restrictions *restrictions, unsigned long eating_start_time) //revisar si es necesario incluir mutex para fork
 {
 	t_philosopher	*new_philo;
 
@@ -17,35 +17,40 @@ t_philosopher	*create_philosopher(int id, unsigned long eating_start_time) //rev
 	new_philo->id = id;
 	new_philo->status = THINKING;
 	new_philo->eating_start_time = eating_start_time;
+	new_philo->restrictions = restrictions;
+	new_philo->restrictions->times_must_eat = 0; // REVISAR ESTOOOOOOOOOOOOOOOOOOOOO
 	return (new_philo);
 }
 
-t_node	*create_node(t_philosopher *philosopher)
+/*
+ * A seat has a philosopher and a fork.
+ */
+t_seat	*create_seat(t_philosopher *philosopher)
 {
-	t_node	*new_node;
+	t_seat	*new_seat;
 
-	new_node = (t_node *)malloc(sizeof(t_node));
-	if (!new_node)
+	new_seat = (t_seat *)malloc(sizeof(t_seat));
+	if (!new_seat)
 	{
-		print_error("Error: can't create new node");
+		print_error("Error: can't create new seat");
 		return (NULL);
 	}
-	new_node->philosopher = philosopher;
-	pthread_mutex_init(new_node->fork, NULL);
-	new_node->prev = NULL;
-	new_node->next = NULL;
-	return (new_node);
+	new_seat->philosopher = philosopher;
+	pthread_mutex_init(&new_seat->fork, NULL);
+	new_seat->prev = NULL;
+	new_seat->next = NULL;
+	return (new_seat);
 }
 
 /*
- * enqueueing each new element
+ * Enqueueing each new element.
  */
-t_node	*add_philosopher(t_node **head, t_philosopher *philosopher)
+t_seat	*add_philosopher(t_seat **head, t_philosopher *philosopher)
 {
-	t_node	*new_element;
-	t_node	*tail;
-
-	new_element = create_node(philosopher);
+	t_seat	*new_element;
+	t_seat	*tail;
+//	dprintf(2, "add_philosopher 1\n"); //borrar
+	new_element = create_seat(philosopher);
 	if (*head == NULL)
 	{
 		*head = new_element;
@@ -65,35 +70,65 @@ t_node	*add_philosopher(t_node **head, t_philosopher *philosopher)
 }
 
 /*
- * creating the whole table
+ * Creating the table. A table has a certain amount of seats.
  */
-int	build_philo_table(t_input input, t_node **table)
+int	build_philosopher_table(t_restrictions *input, t_table *table, int seats_amount) //faltaria incluir validacion en caso que add philosopher falle?
 {
 	int				i;
-	t_philosopher	*philosopher;
-	t_node			*seat;
 	unsigned long	initial_time;
+	t_philosopher	*philosopher;
+	t_seat			*current_seat;
 
 	i = 1;
 	initial_time = get_time_millisec();
-	while (i <= input.number_of_philosophers)
+	input->simulation_start_time = initial_time;
+	while (i <= seats_amount)
 	{
-		philosopher = create_philosopher(i, initial_time);
-		seat = add_philosopher(table, philosopher);
-		pthread_create(&philosopher->thread, NULL, start_simulation, &seat);
+		philosopher = create_philosopher(i, input, initial_time);
+		current_seat = add_philosopher(&table->seats, philosopher);
+		if (pthread_create(&philosopher->thread, NULL, run_simulation, current_seat) != 0) //revisar si toca poner condicional
+			return (-1); //revisar este valor de error
 		i++;
 	}
+
+
+//	dprintf(2, "[%d] build_philo_table 5, sale del while\n", i);
+//	i = 1;
+//	while (i <= seats_amount)
+//	{
+//		if (pthread_join(philosopher->thread, NULL))
+//			return (-1);
+//		usleep(100);
+//		if (pthread_join(philosopher->state, NULL))
+//			return (-1);
+//		i++;
+//	}
 	return (1);
 }
 
 int	main(int argc, char **argv)
 {
-	t_input	input;
+	t_restrictions	restrictions;
+	t_table	table;
+	int	number_of_philosophers;
 
+	table.seats = NULL;
 	if (argc < 5 || argc > 6)
 		return (print_error("Number of arguments is not correct"));
-	else if (parsing(argv, &input) == -1)
+	else if (parsing(argv, &restrictions, &number_of_philosophers) == -1)
 		return (print_error("Invalid arguments"));
-	printf("time(ms)\tphilo\t\taction\n");
+	printf("\033[0;36mtime(ms)\tphilo\taction\033[0m\n");
+	build_philosopher_table(&restrictions, &table, number_of_philosophers);
+	check_philosopher_status(&table);
+
+//	t_seat			*current_seat;
+//	current_seat = table.seats;
+//	while(current_seat)
+//	{
+//		pthread_join(table.seats->philosopher->thread, NULL);
+//		current_seat = current_seat->next;
+//		if(current_seat == table.seats)
+//			break;
+//	}
 	return (0);
 }

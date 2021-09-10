@@ -4,9 +4,9 @@
 
 #include "../includes/philosophers.h"
 
-void	clean_table(t_node **table)
+void	clean_table(t_seat **table)
 {
-	t_node	*temp;
+	t_seat	*temp;
 
 	while (*table != NULL)
 	{

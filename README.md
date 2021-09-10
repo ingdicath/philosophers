@@ -20,15 +20,20 @@ Write the program in C.
 - After finished eating, the philosopher will drop his forks and start sleeping, and when finished, will start thinking.
 - Simulation stops when a philosopher dies.
 
+### Allowed functions
+
+`memset`, `printf`, `malloc`, `free`, `write`, `usleep`, `gettimeofday`
+`pthread_create`, `pthread_detach`, `pthread_join`, `pthread_mutex_init`,
+`pthread_mutex_destroy`, `pthread_mutex_lock`, `pthread_mutex_unlock`
 ---
 
-## Strategy
+## Strategy :bulb:
 
 
 ---
 ## How to build :hammer:
 
-1. Clone the repository and go to folder ```cd push_swap```
+1. Clone the repository and go to folder ```cd philosophers/philo```
 2. Type in the terminal ```make```
 
 ### Usage of _philo_ and _philo_bonus_
@@ -53,8 +58,3 @@ Videos
 - [Unix Threads in C - playlist](https://www.youtube.com/watch?v=d9s_d28yJq0)
 ## Requirements
 
-### Allowed functions
-
-```memset, printf, malloc, free, write, usleep, gettimeofday```
-```pthread_create, pthread_detach, pthread_join, pthread_mutex_init,```
-```pthread_mutex_destroy, pthread_mutex_lock, pthread_mutex_unlock```
