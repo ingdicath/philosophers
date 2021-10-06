@@ -1,6 +1,14 @@
-//
-// Created by dsalaman on 08/07/2021.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   philosophers.h                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/10/06 16:09:24 by dsalaman      #+#    #+#                 */
+/*   Updated: 2021/10/06 16:15:55 by dsalaman      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
@@ -37,12 +45,12 @@ typedef struct s_mutex
 
 typedef struct s_restrictions
 {
-	int			time_to_eat;
-	int			time_to_sleep;
-	int			time_to_die;
-	int			times_must_eat;
-	unsigned long		simulation_start_time;
-	t_mutex		 mutex; //revisar este nombre de variable
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				time_to_die;
+	int				times_must_eat;
+	unsigned long	simulation_start_time;
+	t_mutex			mutex; //revisar este nombre de variable
 }				t_restrictions;
 
 typedef struct s_philosopher

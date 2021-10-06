@@ -1,6 +1,14 @@
-//
-// Created by Diani on 07/08/2021.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   setup_args.c                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/10/06 14:56:18 by dsalaman      #+#    #+#                 */
+/*   Updated: 2021/10/06 15:15:07 by dsalaman      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
@@ -21,7 +29,7 @@ int	extract_arg(char *arg)
 }
 
 int	check_args(t_restrictions input, int number_of_philosophers,
-		int check_times_to_eat) // revisar si es restrictions.number_of_philos < 1 o es restrictions.number_of_philos < 2
+		int check_times_to_eat)
 {
 	if (number_of_philosophers < 1)
 		return (print_error("Invalid number of philosophers"));
@@ -35,7 +43,7 @@ int	check_args(t_restrictions input, int number_of_philosophers,
 
 int	parsing(char **argv, t_restrictions *input, int *number_of_philosophers)
 {
-	int check_times_to_eat;
+	int	check_times_to_eat;
 
 	check_times_to_eat = 0;
 	reset_input(input);
@@ -50,6 +58,5 @@ int	parsing(char **argv, t_restrictions *input, int *number_of_philosophers)
 	}
 	pthread_mutex_init(&input->mutex.write, NULL);
 	pthread_mutex_init(&input->mutex.death, NULL);
-
 	return (check_args(*input, *number_of_philosophers, check_times_to_eat));
 }

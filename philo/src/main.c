@@ -1,10 +1,19 @@
-//
-// Created by Diani on 13/07/2021.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/10/06 14:55:38 by dsalaman      #+#    #+#                 */
+/*   Updated: 2021/10/06 16:31:42 by dsalaman      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-t_philosopher	*create_philosopher(int id, t_restrictions *restrictions, unsigned long eating_start_time) //revisar si es necesario incluir mutex para fork
+t_philosopher	*create_philosopher(int id, t_restrictions *restrictions,
+	unsigned long eating_start_time) //revisar si es necesario incluir mutex para fork
 {
 	t_philosopher	*new_philo;
 
@@ -90,27 +99,14 @@ int	build_philosopher_table(t_restrictions *input, t_table *table, int seats_amo
 			return (-1); //revisar este valor de error
 		i++;
 	}
-
-
-//	dprintf(2, "[%d] build_philo_table 5, sale del while\n", i);
-//	i = 1;
-//	while (i <= seats_amount)
-//	{
-//		if (pthread_join(philosopher->thread, NULL))
-//			return (-1);
-//		usleep(100);
-//		if (pthread_join(philosopher->state, NULL))
-//			return (-1);
-//		i++;
-//	}
 	return (1);
 }
 
 int	main(int argc, char **argv)
 {
 	t_restrictions	restrictions;
-	t_table	table;
-	int	number_of_philosophers;
+	t_table			table;
+	int				number_of_philosophers;
 
 	table.seats = NULL;
 	if (argc < 5 || argc > 6)
@@ -120,7 +116,6 @@ int	main(int argc, char **argv)
 	printf("\033[0;36mtime(ms)\tphilo\taction\033[0m\n");
 	build_philosopher_table(&restrictions, &table, number_of_philosophers);
 	check_philosopher_status(&table);
-
 //	t_seat			*current_seat;
 //	current_seat = table.seats;
 //	while(current_seat)
