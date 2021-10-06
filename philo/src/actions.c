@@ -15,9 +15,10 @@
 void	print_status(t_philosopher *philosopher, char *message)
 {
 	pthread_mutex_lock(&philosopher->restrictions->mutex.write);
-	printf("[%lu]\t\t", (get_time_millisec() 
+	printf("[%lu]\t\t", (get_time_millisec()
 			- philosopher->restrictions->simulation_start_time));
 	printf("[%d]\t", philosopher->id);
+	printf("[%d]\t", philosopher->eating_counter);
 	printf("%s\n", message);
 	pthread_mutex_unlock(&philosopher->restrictions->mutex.write);
 }
@@ -32,15 +33,19 @@ void	take_forks(t_philosopher *philosopher, pthread_mutex_t *left_fork,
 	philosopher->status = WITH_FORKS;
 }
 
-void	go_to_eat(t_philosopher *philosopher, pthread_mutex_t *left_fork,
+void	go_to_eat(t_philosopher *philo, pthread_mutex_t *left_fork,
 		pthread_mutex_t *right_fork)
 {
-	print_status(philosopher, "\033[0;32mis eating\033[0m");
-	philosopher->eating_start_time = get_time_millisec();
-	action_time(philosopher->restrictions->time_to_eat);
+	print_status(philo, "\033[0;32mis eating\033[0m");
+	philo->eating_start_time = get_time_millisec();
+	action_time(philo->restrictions->time_to_eat);
+	if (philo->restrictions->times_must_eat != -1)
+		philo->eating_counter++;
+	if (philo->restrictions->times_must_eat == philo->eating_counter)
+		philo->restrictions->eat_control_counter++;
 	pthread_mutex_unlock(left_fork);
 	pthread_mutex_unlock(right_fork);
-	philosopher->status = EATING;
+	philo->status = EATING;
 }
 
 void	go_to_sleep(t_philosopher *philosopher)
@@ -56,58 +61,3 @@ void	go_to_think(t_philosopher *philosopher)
 	philosopher->status = THINKING;
 }
 
-/*
- * seat => One philosopher + one fork.
- */
-void	*run_simulation(void *arg)
-{
-	t_seat			*seat;
-	t_philosopher	*philosopher;
-//	int	count_times_to_eat;
-	seat = arg;
-	philosopher = seat->philosopher;
-//	count_times_to_eat = -1;
-	usleep((philosopher->id % 2) * 100);
-	while (philosopher->status != DIED)
-//		&& count_times_to_eat < philosopher->restrictions->times_must_eat)
-	{
-//		dprintf(2, "start simulation 2\n"); //borrar
-//		printf("status philo: %d\n", philosopher->status);
-//		printf("status REAL: %d\n", THINKING);
-//		printf("id philo: %d\n", philosopher->id);
-		if (philosopher->status == THINKING)
-			take_forks(philosopher, &seat->prev->fork, &seat->fork);
-		if (philosopher->status == WITH_FORKS)
-			go_to_eat(philosopher, &seat->prev->fork, &seat->fork);
-		else if (philosopher->status == EATING)
-			go_to_sleep(philosopher);
-
-		else if (philosopher->status == SLEEPING)
-			go_to_think(philosopher);
-	}
-	return (NULL);
-}
-
-void	check_philosopher_status(t_table *table)
-{
-	t_seat			*current_seat;
-	t_philosopher	*current_philosopher;
-
-	current_seat = table->seats;
-	while (current_seat)
-	{
-//		usleep(100);
-		current_philosopher = current_seat->philosopher;
-//		pthread_mutex_lock(&current_philosopher->restrictions->mutex.death);
-		if ((get_time_millisec() - current_philosopher->eating_start_time)
-			>= (unsigned long)current_philosopher->restrictions->time_to_die)
-		{
-			pthread_mutex_lock(&current_philosopher->restrictions->mutex.death);
-			current_philosopher->status = DIED;
-			print_status(current_philosopher, "\033[0;31mhas died\033[0m");
-			pthread_mutex_unlock(&current_philosopher->restrictions->mutex.death);
-			break ;
-		}
-		current_seat = current_seat->next;
-	}
-}

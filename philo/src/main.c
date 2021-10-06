@@ -13,7 +13,7 @@
 #include "../includes/philosophers.h"
 
 t_philosopher	*create_philosopher(int id, t_restrictions *restrictions,
-	unsigned long eating_start_time) //revisar si es necesario incluir mutex para fork
+					unsigned long eating_start_time)
 {
 	t_philosopher	*new_philo;
 
@@ -26,8 +26,8 @@ t_philosopher	*create_philosopher(int id, t_restrictions *restrictions,
 	new_philo->id = id;
 	new_philo->status = THINKING;
 	new_philo->eating_start_time = eating_start_time;
+	new_philo->eating_counter = 0;
 	new_philo->restrictions = restrictions;
-	new_philo->restrictions->times_must_eat = 0; // REVISAR ESTOOOOOOOOOOOOOOOOOOOOO
 	return (new_philo);
 }
 
@@ -58,7 +58,7 @@ t_seat	*add_philosopher(t_seat **head, t_philosopher *philosopher)
 {
 	t_seat	*new_element;
 	t_seat	*tail;
-//	dprintf(2, "add_philosopher 1\n"); //borrar
+
 	new_element = create_seat(philosopher);
 	if (*head == NULL)
 	{
@@ -81,7 +81,8 @@ t_seat	*add_philosopher(t_seat **head, t_philosopher *philosopher)
 /*
  * Creating the table. A table has a certain amount of seats.
  */
-int	build_philosopher_table(t_restrictions *input, t_table *table, int seats_amount) //faltaria incluir validacion en caso que add philosopher falle?
+int	build_philosopher_table(t_restrictions *input, t_table *table,
+							int seats_amount) //faltaria incluir validacion en caso que add philosopher falle?
 {
 	int				i;
 	unsigned long	initial_time;
@@ -95,7 +96,8 @@ int	build_philosopher_table(t_restrictions *input, t_table *table, int seats_amo
 	{
 		philosopher = create_philosopher(i, input, initial_time);
 		current_seat = add_philosopher(&table->seats, philosopher);
-		if (pthread_create(&philosopher->thread, NULL, run_simulation, current_seat) != 0) //revisar si toca poner condicional
+		if (pthread_create(&philosopher->thread, NULL, run_simulation,
+				current_seat) != 0)
 			return (-1); //revisar este valor de error
 		i++;
 	}
@@ -113,17 +115,17 @@ int	main(int argc, char **argv)
 		return (print_error("Number of arguments is not correct"));
 	else if (parsing(argv, &restrictions, &number_of_philosophers) == -1)
 		return (print_error("Invalid arguments"));
-	printf("\033[0;36mtime(ms)\tphilo\taction\033[0m\n");
+	printf("\033[0;36mtime(ms)\tphilo\teaten\taction\033[0m\n");
 	build_philosopher_table(&restrictions, &table, number_of_philosophers);
-	check_philosopher_status(&table);
-//	t_seat			*current_seat;
-//	current_seat = table.seats;
-//	while(current_seat)
-//	{
-//		pthread_join(table.seats->philosopher->thread, NULL);
-//		current_seat = current_seat->next;
-//		if(current_seat == table.seats)
-//			break;
-//	}
+	check_philosopher_status(&table, number_of_philosophers);
 	return (0);
 }
+
+/*
+ * Tengo que limpiar:
+ * 1. philosopher
+ * 2. seat
+ * 3. destroy mutex del fork
+ * 4. destroy mutex de death
+ * 5. destroy mutex de write
+ */

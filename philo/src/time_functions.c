@@ -20,13 +20,13 @@ unsigned long	get_time_millisec(void)
 	return (current_time.tv_sec * 1000 + current_time.tv_usec / 1000);
 }
 
-void action_time(int action_time)
+void	action_time(int action_time)
 {
-	unsigned long start_sleep;
+	unsigned long	start_sleep;
 
 	start_sleep = get_time_millisec();
 //	action_time *= 1000;
-	while((get_time_millisec() - start_sleep) < (unsigned)action_time)
+	while ((get_time_millisec() - start_sleep) < (unsigned)action_time)
 		usleep(100);
 }
 

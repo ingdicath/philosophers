@@ -45,17 +45,19 @@ typedef struct s_mutex
 
 typedef struct s_restrictions
 {
-	int				time_to_eat;
-	int				time_to_sleep;
-	int				time_to_die;
-	int				times_must_eat;
-	unsigned long	simulation_start_time;
-	t_mutex			mutex; //revisar este nombre de variable
+	int					time_to_eat;
+	int					time_to_sleep;
+	int					time_to_die;
+	int					times_must_eat;
+	int					eat_control_counter;
+	unsigned long		simulation_start_time;
+	t_mutex				mutex; //revisar este nombre de variable
 }				t_restrictions;
 
 typedef struct s_philosopher
 {
 	int					id;
+	int					eating_counter;
 	unsigned long		eating_start_time;
 	pthread_t			thread;
 	t_status			status;
@@ -97,14 +99,14 @@ t_seat			*add_philosopher(t_seat **head, t_philosopher *philosopher);
 void			*run_simulation(void *arg);
 void			take_forks(t_philosopher *philosopher,
 					pthread_mutex_t *left_fork, pthread_mutex_t *right_fork);
-void			go_to_eat(t_philosopher *philosopher,
+void			go_to_eat(t_philosopher *philo,
 					pthread_mutex_t *left_fork, pthread_mutex_t *right_fork);
 void			go_to_sleep(t_philosopher *philosopher);
 void			go_to_think(t_philosopher *philosopher);
 void			print_status(t_philosopher *philosopher, char *message);
 int				build_philosopher_table(t_restrictions *input, t_table *table,
 					int seats_amount);
-void			check_philosopher_status(t_table *table);
+void			check_philosopher_status(t_table *table, int num_philosophers);
 
 /*
  * ------------------ time functions ------------------------------
@@ -121,5 +123,7 @@ void			action_time(int action_time);
 int				ft_is_pos_number(char *str);
 int				ft_iswhitespace(char c);
 int				ft_atoi(const char *str);
+void			clean_table(t_seat **table);
+void			clean_seats(t_seat *seat);
 
 #endif

@@ -19,7 +19,28 @@ void	clean_table(t_seat **table)
 	while (*table != NULL)
 	{
 		temp = *table;
-		*table = (*table)->prev;
+		*table = (*table)->next;
 		free(temp);
 	}
 }
+
+void	clean_seats(t_seat *seat)
+{
+	t_seat	*temp;
+
+	while (seat != NULL)
+	{
+		temp = seat;
+		seat = seat->next;
+		free(temp);
+	}
+}
+
+/*
+ * Tengo que limpiar:
+ * 1. philosopher (tabla)
+ * 2. seat
+ * 3. destroy mutex del fork
+ * 4. destroy mutex de death
+ * 5. destroy mutex de write
+ */
