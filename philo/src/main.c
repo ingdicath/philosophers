@@ -82,7 +82,7 @@ t_seat	*add_philosopher(t_seat **head, t_philosopher *philosopher)
  * Creating the table. A table has a certain amount of seats.
  */
 int	build_philosopher_table(t_restrictions *input, t_table *table,
-							int seats_amount) //faltaria incluir validacion en caso que add philosopher falle?
+		int seats_amount) //faltaria incluir validacion en caso que add philosopher falle?
 {
 	int				i;
 	unsigned long	initial_time;
@@ -98,10 +98,10 @@ int	build_philosopher_table(t_restrictions *input, t_table *table,
 		current_seat = add_philosopher(&table->seats, philosopher);
 		if (pthread_create(&philosopher->thread, NULL, run_simulation,
 				current_seat) != 0)
-			return (-1); //revisar este valor de error
+			return (FAILED); //revisar este valor de error
 		i++;
 	}
-	return (1);
+	return (SUCCESSFUL);
 }
 
 int	main(int argc, char **argv)
@@ -113,11 +113,16 @@ int	main(int argc, char **argv)
 	table.seats = NULL;
 	if (argc < 5 || argc > 6)
 		return (print_error("Number of arguments is not correct"));
-	else if (parsing(argv, &restrictions, &number_of_philosophers) == -1)
+	else if (parsing(argv, &restrictions, &number_of_philosophers) == FAILED)
 		return (print_error("Invalid arguments"));
-	printf("\033[0;36mtime(ms)\tphilo\teaten\taction\033[0m\n");
-	build_philosopher_table(&restrictions, &table, number_of_philosophers);
+	printf("\033[0;36mtime(ms)\tphilo\taction\033[0m\n");
+	if (build_philosopher_table(&restrictions, &table, number_of_philosophers) != SUCCESSFUL)
+		return (print_error("Error building philosophers"));
 	check_philosopher_status(&table, number_of_philosophers);
+	clean_mutexes(table.seats, number_of_philosophers);
+
+//    clean_seats(table.seats);
+//    system("leaks philo");
 	return (0);
 }
 

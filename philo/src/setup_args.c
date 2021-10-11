@@ -38,7 +38,7 @@ int	check_args(t_restrictions input, int number_of_philosophers,
 		return (print_error("Invalid value for time"));
 	if (check_times_to_eat && input.times_must_eat <= 0) //revisar esta condicion
 		return (print_error("Invalid value for times must eat"));
-	return (1);
+	return (SUCCESSFUL);
 }
 
 int	parsing(char **argv, t_restrictions *input, int *number_of_philosophers)

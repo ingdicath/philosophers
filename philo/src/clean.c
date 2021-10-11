@@ -12,17 +12,17 @@
 
 #include "../includes/philosophers.h"
 
-void	clean_table(t_seat **table)
-{
-	t_seat	*temp;
-
-	while (*table != NULL)
-	{
-		temp = *table;
-		*table = (*table)->next;
-		free(temp);
-	}
-}
+//void	clean_table(t_seat **table)
+//{
+//	t_seat	*temp;
+//
+//	while (*table != NULL)
+//	{
+//		temp = *table;
+//		*table = (*table)->next;
+//		free(temp);
+//	}
+//}
 
 void	clean_seats(t_seat *seat)
 {
@@ -33,6 +33,23 @@ void	clean_seats(t_seat *seat)
 		temp = seat;
 		seat = seat->next;
 		free(temp);
+	}
+}
+
+void 	clean_mutexes(t_seat *seat, int number_of_philosophers)
+{
+	int	i;
+
+	i = 0;
+	if (seat)
+	{
+		while (i < number_of_philosophers)
+		{
+			pthread_mutex_destroy(&seat->fork);
+			i++;
+		}
+		pthread_mutex_destroy(&seat->philosopher->restrictions->mutex.death);
+		pthread_mutex_destroy(&seat->philosopher->restrictions->mutex.write);
 	}
 }
 

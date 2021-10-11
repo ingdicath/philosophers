@@ -24,15 +24,29 @@ void	*run_simulation(void *arg)
 	philosopher = seat->philosopher;
 	usleep((philosopher->id % 2) * 100);
 	while (philosopher->status != DIED)
+	// con la siguiente linea tampoco se arregla el problema
+//	while (philosopher->status != DIED || philosopher->eating_counter < philosopher->restrictions->times_must_eat ) //aqui toca agregar las veces que ha comido
 	{
 		if (philosopher->status == THINKING)
+		{
+			usleep(100);
 			take_forks(philosopher, &seat->prev->fork, &seat->fork);
+		}
 		if (philosopher->status == WITH_FORKS)
+		{
+			usleep(100);
 			go_to_eat(philosopher, &seat->prev->fork, &seat->fork);
+		}
 		else if (philosopher->status == EATING)
+		{
+			usleep(100);
 			go_to_sleep(philosopher);
+		}
 		else if (philosopher->status == SLEEPING)
+		{
+			usleep(100);
 			go_to_think(philosopher);
+		}
 	}
 	return (NULL);
 }
@@ -58,11 +72,12 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 		}
 		current_seat = current_seat->next;
 	}
+	// aqui no deberia ir algo para evitar que siga escribiendo despues de la muerte?? o algo para terminar los threads?
 	if (curr_philosopher->restrictions->eat_control_counter >= num_philosophers)
 	{
 		usleep(100);
 		pthread_mutex_lock(&curr_philosopher->restrictions->mutex.write);
-		printf("All philosophers have their belly full of food.\n");
+		printf("All philosophers have eaten enough.\n");
 		pthread_mutex_unlock(&curr_philosopher->restrictions->mutex.write);
 	}
 }

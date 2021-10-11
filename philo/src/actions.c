@@ -6,7 +6,7 @@
 /*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/10/06 14:34:54 by dsalaman      #+#    #+#                 */
-/*   Updated: 2021/10/06 16:35:25 by dsalaman      ########   odam.nl         */
+/*   Updated: 2021/10/07 08:54:41 by dsalaman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	print_status(t_philosopher *philosopher, char *message)
 	printf("[%lu]\t\t", (get_time_millisec()
 			- philosopher->restrictions->simulation_start_time));
 	printf("[%d]\t", philosopher->id);
-	printf("[%d]\t", philosopher->eating_counter);
+//	printf("[%d]\t", philosopher->eating_counter);
 	printf("%s\n", message);
 	pthread_mutex_unlock(&philosopher->restrictions->mutex.write);
 }
@@ -60,4 +60,3 @@ void	go_to_think(t_philosopher *philosopher)
 	print_status(philosopher, "\033[0;36mis thinking\033[0m");
 	philosopher->status = THINKING;
 }
-

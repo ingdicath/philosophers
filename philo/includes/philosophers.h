@@ -26,6 +26,8 @@
 # define CYAN "\033[0;36m"
 # define RESET "\033[0m"
 # define ORANGE "\033[38;5;172m"
+# define SUCCESSFUL 1
+# define FAILED -1
 
 typedef enum e_status
 {
@@ -125,5 +127,6 @@ int				ft_iswhitespace(char c);
 int				ft_atoi(const char *str);
 void			clean_table(t_seat **table);
 void			clean_seats(t_seat *seat);
+void			clean_mutexes(t_seat *seat, int num_philosophers);
 
 #endif
