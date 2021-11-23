@@ -51,7 +51,7 @@ int	print_error(char *str)
 	return (FAILED);
 }
 
-int	ft_is_pos_number(char *str)
+int	ft_is_pos_number(char const *str)
 {
 	int	i;
 

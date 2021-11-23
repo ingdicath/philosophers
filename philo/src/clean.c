@@ -36,13 +36,19 @@ void	clean_seats(t_seat *seat)
 	}
 }
 
-void 	clean_mutexes(t_seat *seat, int number_of_philosophers)
+void	clean_mutexes(t_seat *seat, int number_of_philosophers)
 {
 	int	i;
 
 	i = 0;
 	if (seat)
 	{
+//		while (i < number_of_philosophers) //
+//		{
+//			pthread_join(seat->philosopher->thread, NULL);//
+//			i++;//
+//		}//
+//		i = 0;//
 		while (i < number_of_philosophers)
 		{
 			pthread_mutex_destroy(&seat->fork);

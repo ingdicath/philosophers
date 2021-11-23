@@ -115,12 +115,12 @@ int	main(int argc, char **argv)
 		return (print_error("Number of arguments is not correct"));
 	else if (parsing(argv, &restrictions, &number_of_philosophers) == FAILED)
 		return (print_error("Invalid arguments"));
-	printf("\033[0;36mtime(ms)\tphilo\taction\033[0m\n");
-	if (build_philosopher_table(&restrictions, &table, number_of_philosophers) != SUCCESSFUL)
+	printf("%stime(ms)\tphilo\taction%s\n", CYAN, RESET);
+	if (build_philosopher_table(&restrictions, &table, number_of_philosophers)
+		!= SUCCESSFUL)
 		return (print_error("Error building philosophers"));
 	check_philosopher_status(&table, number_of_philosophers);
 	clean_mutexes(table.seats, number_of_philosophers);
-
 //    clean_seats(table.seats);
 //    system("leaks philo");
 	return (0);

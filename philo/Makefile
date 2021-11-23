@@ -6,7 +6,7 @@ NAME 		= philo
 OBJ_DIR 	= obj/
 SRC_DIR 	= src/
 INC_DIR 	= includes/
-FLAGS 		= -Wall -Wextra -Werror -I$(INC_DIR) -pthread
+FLAGS 		= -Wall -Wextra -Werror -g -I$(INC_DIR) -pthread
 SRC 		= main.c utils.c setup_args.c clean.c actions.c time_functions.c \
 				simulation.c
 SRC_PATH	= $(addprefix $(SRC_DIR), $(SRC))

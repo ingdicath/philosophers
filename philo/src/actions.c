@@ -12,14 +12,15 @@
 
 #include "../includes/philosophers.h"
 
-void	print_status(t_philosopher *philosopher, char *message)
+void	print_status(t_philosopher *philosopher, char *start_color,
+		char *message, char *reset_color)
 {
 	pthread_mutex_lock(&philosopher->restrictions->mutex.write);
 	printf("[%lu]\t\t", (get_time_millisec()
 			- philosopher->restrictions->simulation_start_time));
 	printf("[%d]\t", philosopher->id);
 //	printf("[%d]\t", philosopher->eating_counter);
-	printf("%s\n", message);
+	printf("%s%s%s\n", start_color, message, reset_color);
 	pthread_mutex_unlock(&philosopher->restrictions->mutex.write);
 }
 
@@ -27,16 +28,16 @@ void	take_forks(t_philosopher *philosopher, pthread_mutex_t *left_fork,
 		pthread_mutex_t *right_fork)
 {
 	pthread_mutex_lock(left_fork);
-	print_status(philosopher, "\033[38;5;172mhas taken left fork\033[0m");
+	print_status(philosopher, ORANGE, "has taken left fork", RESET);
 	pthread_mutex_lock(right_fork);
-	print_status(philosopher, "\033[38;5;172mhas taken right fork\033[0m");
+	print_status(philosopher, ORANGE, "has taken right fork", RESET);
 	philosopher->status = WITH_FORKS;
 }
 
 void	go_to_eat(t_philosopher *philo, pthread_mutex_t *left_fork,
 		pthread_mutex_t *right_fork)
 {
-	print_status(philo, "\033[0;32mis eating\033[0m");
+	print_status(philo, GREEN, "is eating", RESET);
 	philo->eating_start_time = get_time_millisec();
 	action_time(philo->restrictions->time_to_eat);
 	if (philo->restrictions->times_must_eat != -1)
@@ -50,13 +51,13 @@ void	go_to_eat(t_philosopher *philo, pthread_mutex_t *left_fork,
 
 void	go_to_sleep(t_philosopher *philosopher)
 {
-	print_status(philosopher, "\033[0;35mis sleeping\033[0m");
+	print_status(philosopher, PURPLE, "is sleeping", RESET);
 	action_time(philosopher->restrictions->time_to_sleep);
 	philosopher->status = SLEEPING;
 }
 
 void	go_to_think(t_philosopher *philosopher)
 {
-	print_status(philosopher, "\033[0;36mis thinking\033[0m");
+	print_status(philosopher, CYAN,"is thinking", RESET);
 	philosopher->status = THINKING;
 }

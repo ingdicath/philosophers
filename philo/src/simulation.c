@@ -28,25 +28,13 @@ void	*run_simulation(void *arg)
 //	while (philosopher->status != DIED || philosopher->eating_counter < philosopher->restrictions->times_must_eat ) //aqui toca agregar las veces que ha comido
 	{
 		if (philosopher->status == THINKING)
-		{
-			usleep(100);
 			take_forks(philosopher, &seat->prev->fork, &seat->fork);
-		}
 		if (philosopher->status == WITH_FORKS)
-		{
-			usleep(100);
 			go_to_eat(philosopher, &seat->prev->fork, &seat->fork);
-		}
 		else if (philosopher->status == EATING)
-		{
-			usleep(100);
 			go_to_sleep(philosopher);
-		}
 		else if (philosopher->status == SLEEPING)
-		{
-			usleep(100);
 			go_to_think(philosopher);
-		}
 	}
 	return (NULL);
 }
@@ -58,7 +46,8 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 
 	current_seat = table->seats;
 	curr_philosopher = current_seat->philosopher;
-	while (current_seat && curr_philosopher->restrictions->eat_control_counter < num_philosophers)
+	while (current_seat && curr_philosopher->restrictions->eat_control_counter
+		< num_philosophers)
 	{
 		curr_philosopher = current_seat->philosopher;
 		if ((get_time_millisec() - curr_philosopher->eating_start_time)
@@ -66,7 +55,7 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 		{
 			pthread_mutex_lock(&curr_philosopher->restrictions->mutex.death);
 			curr_philosopher->status = DIED;
-			print_status(curr_philosopher, "\033[0;31mhas died\033[0m");
+			print_status(curr_philosopher, RED, "has died", RESET);
 			pthread_mutex_unlock(&curr_philosopher->restrictions->mutex.death);
 			break ;
 		}

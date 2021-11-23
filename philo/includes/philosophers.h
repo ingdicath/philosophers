@@ -31,11 +31,11 @@
 
 typedef enum e_status
 {
-	DIED = 0,
-	EATING = 1,
-	SLEEPING = 2,
-	THINKING = 3,
-	WITH_FORKS = 4,
+	DIED,
+	EATING,
+	SLEEPING,
+	THINKING,
+	WITH_FORKS,
 }	t_status;
 
 typedef struct s_mutex
@@ -105,7 +105,8 @@ void			go_to_eat(t_philosopher *philo,
 					pthread_mutex_t *left_fork, pthread_mutex_t *right_fork);
 void			go_to_sleep(t_philosopher *philosopher);
 void			go_to_think(t_philosopher *philosopher);
-void			print_status(t_philosopher *philosopher, char *message);
+void			print_status(t_philosopher *philosopher, char *start_color,
+					 char *message, char *reset_color);
 int				build_philosopher_table(t_restrictions *input, t_table *table,
 					int seats_amount);
 void			check_philosopher_status(t_table *table, int num_philosophers);
@@ -122,11 +123,12 @@ void			action_time(int action_time);
  * ------------------ Utils --------------------------------------
  */
 
-int				ft_is_pos_number(char *str);
+int				ft_is_pos_number(char const *str);
 int				ft_iswhitespace(char c);
 int				ft_atoi(const char *str);
 void			clean_table(t_seat **table);
 void			clean_seats(t_seat *seat);
 void			clean_mutexes(t_seat *seat, int num_philosophers);
+int				print_error(char *str);
 
 #endif
