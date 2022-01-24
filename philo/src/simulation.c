@@ -22,10 +22,8 @@ void	*run_simulation(void *arg)
 
 	seat = arg;
 	philosopher = seat->philosopher;
-	usleep((philosopher->id % 2) * 100);
+	usleep((philosopher->id % 2) * 15000);
 	while (philosopher->status != DIED)
-	// con la siguiente linea tampoco se arregla el problema
-//	while (philosopher->status != DIED || philosopher->eating_counter < philosopher->restrictions->times_must_eat ) //aqui toca agregar las veces que ha comido
 	{
 		if (philosopher->status == THINKING)
 			take_forks(philosopher, &seat->prev->fork, &seat->fork);

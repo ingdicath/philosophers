@@ -49,6 +49,13 @@ void	clean_mutexes(t_seat *seat, int number_of_philosophers)
 //			i++;//
 //		}//
 //		i = 0;//
+
+		while (i < number_of_philosophers) //adding 24th Jan
+		{
+			pthread_detach(seat->philosopher->thread);
+			sleep(2); //this function is not allowed
+			i++;
+		}
 		while (i < number_of_philosophers)
 		{
 			pthread_mutex_destroy(&seat->fork);
