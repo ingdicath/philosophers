@@ -65,13 +65,12 @@ typedef struct s_philosopher
 	t_restrictions		*restrictions;
 }				t_philosopher;
 
-// circular doubly linked list
+// circular single linked list
 typedef struct s_seat
 {
 	t_philosopher		*philosopher;
 	pthread_mutex_t		fork;
 	struct s_seat		*next;
-	struct s_seat		*prev;
 }	t_seat;
 
 typedef struct s_table

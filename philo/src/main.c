@@ -46,34 +46,29 @@ t_seat	*create_seat(t_philosopher *philosopher)
 	}
 	new_seat->philosopher = philosopher;
 	pthread_mutex_init(&new_seat->fork, NULL);
-	new_seat->prev = NULL;
+	new_seat->next = NULL;
 	new_seat->next = NULL;
 	return (new_seat);
 }
 
 /*
- * Enqueueing each new element.
+ * Enqueueing each new element, circular single linked list
  */
 t_seat	*add_philosopher(t_seat **head, t_philosopher *philosopher)
 {
 	t_seat	*new_element;
-	t_seat	*tail;
 
 	new_element = create_seat(philosopher);
 	if (*head == NULL)
 	{
 		*head = new_element;
-		tail = new_element;
-		tail->next = *head;
-		tail->prev = *head;
+		new_element->next = *head;
 	}
 	else
 	{
-		tail = (*head)->prev;
-		tail->next = new_element;
-		new_element->prev = tail;
-		new_element->next = *head;
-		(*head)->prev = new_element;
+		new_element->next = (*head)->next;
+		(*head)->next = new_element;
+		*head = new_element;
 	}
 	return (new_element);
 }

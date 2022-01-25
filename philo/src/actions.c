@@ -19,7 +19,7 @@ void	print_status(t_philosopher *philosopher, char *start_color,
 	printf("[%lu]\t\t", (get_time_millisec()
 			- philosopher->restrictions->simulation_start_time));
 	printf("[%d]\t", philosopher->id);
-//	printf("[%d]\t", philosopher->eating_counter);
+	printf("[%d]\t", philosopher->eating_counter); //quitar
 	printf("%s%s%s\n", start_color, message, reset_color);
 	pthread_mutex_unlock(&philosopher->restrictions->mutex.write);
 }
@@ -32,20 +32,22 @@ void	take_forks(t_philosopher *philosopher, pthread_mutex_t *left_fork,
 	pthread_mutex_lock(right_fork);
 	print_status(philosopher, ORANGE, "has taken right fork", RESET);
 	philosopher->status = WITH_FORKS;
+//	usleep(10000); //new
 }
 
 void	go_to_eat(t_philosopher *philo, pthread_mutex_t *left_fork,
 		pthread_mutex_t *right_fork)
 {
-	print_status(philo, GREEN, "is eating", RESET);
 	philo->eating_start_time = get_time_millisec();
+	print_status(philo, GREEN, "is eating", RESET);
 	action_time(philo->restrictions->time_to_eat);
+
 	if (philo->restrictions->times_must_eat != -1)
 		philo->eating_counter++;
 	if (philo->restrictions->times_must_eat == philo->eating_counter)
 		philo->restrictions->eat_control_counter++;
-	pthread_mutex_unlock(left_fork);
 	pthread_mutex_unlock(right_fork);
+	pthread_mutex_unlock(left_fork);
 	philo->status = EATING;
 }
 
