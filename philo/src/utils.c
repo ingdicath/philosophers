@@ -48,7 +48,7 @@ int	ft_atoi(const char *str)
 int	print_error(char *str)
 {
 	printf("%s\n", str);
-	return (FAILED);
+	return (FAILURE);
 }
 
 int	ft_is_pos_number(char const *str)

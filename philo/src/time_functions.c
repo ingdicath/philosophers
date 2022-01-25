@@ -25,7 +25,6 @@ void	action_time(int action_time)
 	unsigned long	start_sleep;
 
 	start_sleep = get_time_millisec();
-//	action_time *= 1000;
 	while ((get_time_millisec() - start_sleep) < (unsigned)action_time)
 		usleep(1000);
 }

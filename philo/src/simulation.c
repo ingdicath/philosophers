@@ -59,7 +59,7 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 			pthread_mutex_unlock(&curr_philosopher->restrictions->mutex.death);
 			break ;
 		}
-		current_seat = current_seat->next;
+		current_seat = current_seat->prev;
 	}
 	control_eating(num_philosophers, curr_philosopher);
 }

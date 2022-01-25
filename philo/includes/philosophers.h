@@ -26,7 +26,7 @@
 # define RESET "\033[0m"
 # define ORANGE "\033[38;5;172m"
 # define SUCCESSFUL 1
-# define FAILED -1
+# define FAILURE -1
 
 typedef enum e_status
 {
