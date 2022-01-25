@@ -98,7 +98,7 @@ int	build_philosopher_table(t_restrictions *input, t_table *table,
 		current_seat = add_philosopher(&table->seats, philosopher);
 		if (pthread_create(&philosopher->thread, NULL, run_simulation,
 				current_seat) != 0)
-			return (FAILED); //revisar este valor de error
+			return (FAILED);
 		i++;
 	}
 	return (SUCCESSFUL);
@@ -121,8 +121,7 @@ int	main(int argc, char **argv)
 		return (print_error("Error building philosophers"));
 	check_philosopher_status(&table, number_of_philosophers);
 	clean_mutexes(table.seats, number_of_philosophers);
-//    clean_seats(table.seats);
-//    system("leaks philo");
+	clean_table(table.seats, number_of_philosophers);
 	return (0);
 }
 

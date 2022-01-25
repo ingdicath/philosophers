@@ -36,7 +36,7 @@ int	check_args(t_restrictions input, int number_of_philosophers,
 	if (input.time_to_die <= 0 || input.time_to_eat <= 0
 		|| input.time_to_sleep <= 0)
 		return (print_error("Invalid value for time"));
-	if (check_times_to_eat && input.times_must_eat <= 0) //revisar esta condicion
+	if (check_times_to_eat && input.times_must_eat <= 0)
 		return (print_error("Invalid value for times must eat"));
 	return (SUCCESSFUL);
 }

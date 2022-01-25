@@ -18,7 +18,6 @@
 # include <stdio.h>
 # include <limits.h>
 # include <sys/time.h>
-
 # define RED "\033[0;31m"
 # define GREEN "\033[0;32m"
 # define YELLOW "\033[0;33m"
@@ -70,7 +69,7 @@ typedef struct s_philosopher
 typedef struct s_seat
 {
 	t_philosopher		*philosopher;
-	pthread_mutex_t		fork; //revisar si requiere *
+	pthread_mutex_t		fork;
 	struct s_seat		*next;
 	struct s_seat		*prev;
 }	t_seat;
@@ -79,7 +78,8 @@ typedef struct s_table
 {
 	t_seat				*seats;
 }				t_table;
-/*
+
+/**
  * ------------------------- parsing ------------------------------
  */
 int				print_error(char *str);
@@ -90,10 +90,9 @@ void			reset_input(t_restrictions *input);
 int				parsing(char **argv, t_restrictions *input,
 					int *number_of_philosophers);
 
-/*
+/**
  * ------------------ philo functions ------------------------------
  */
-
 t_philosopher	*create_philosopher(int id, t_restrictions *restrictions,
 					unsigned long eating_start_time);
 t_seat			*create_seat(t_philosopher *philosopher);
@@ -110,23 +109,19 @@ void			print_status(t_philosopher *philosopher, char *start_color,
 int				build_philosopher_table(t_restrictions *input, t_table *table,
 					int seats_amount);
 void			check_philosopher_status(t_table *table, int num_philosophers);
-
-/*
- * ------------------ time functions ------------------------------
- */
-
+void			control_eating(int num_philosophers,
+					const t_philosopher *curr_philosopher);
 unsigned long	get_time_millisec(void);
 void			fix_sleep_accuracy(unsigned long time_to_sleep);
 void			action_time(int action_time);
 
-/*
+/**
  * ------------------ Utils --------------------------------------
  */
-
 int				ft_is_pos_number(char const *str);
 int				ft_iswhitespace(char c);
 int				ft_atoi(const char *str);
-void			clean_table(t_seat **table);
+void			clean_table(t_seat *seat, int number_of_philosophers);
 void			clean_seats(t_seat *seat);
 void			clean_mutexes(t_seat *seat, int num_philosophers);
 int				print_error(char *str);

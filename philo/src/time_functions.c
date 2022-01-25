@@ -27,32 +27,5 @@ void	action_time(int action_time)
 	start_sleep = get_time_millisec();
 //	action_time *= 1000;
 	while ((get_time_millisec() - start_sleep) < (unsigned)action_time)
-		usleep(100);
+		usleep(1000);
 }
-
-// chequear esta funcion
-//void	better_sleep(long d)
-//{
-//	struct timeval tmp;
-//	struct timeval start;
-//
-//	gettimeofday(&start, NULL);
-//	while (1)
-//	{
-//		usleep(50);
-//		gettimeofday(&tmp, NULL);
-//		if ((((long)(tmp.tv_sec - start.tv_sec)) * 1000000 + ((long)(tmp.tv_usec - start.tv_usec))) >= d)
-//			return ;
-//	}
-//}
-
-// for usleep() inaccuracy
-//static void    stupid_sleep(unsigned long ms)
-//{
-//	unsigned long    entry;
-//
-//	entry = get_time_us();
-//	ms *= 1000;
-//	while ((get_time_us() - entry) < ms)
-//		usleep(100);
-//}

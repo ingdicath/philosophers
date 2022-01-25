@@ -12,6 +12,8 @@
 
 #include "../includes/philosophers.h"
 
+
+
 /*
  * seat => One philosopher + one fork.
  */
@@ -22,7 +24,7 @@ void	*run_simulation(void *arg)
 
 	seat = arg;
 	philosopher = seat->philosopher;
-	usleep((philosopher->id % 2) * 15000);
+	usleep((philosopher->id % 2) * 100000);
 	while (philosopher->status != DIED)
 	{
 		if (philosopher->status == THINKING)
@@ -53,13 +55,17 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 		{
 			pthread_mutex_lock(&curr_philosopher->restrictions->mutex.death);
 			curr_philosopher->status = DIED;
-			print_status(curr_philosopher, RED, "has died", RESET);
+			print_status(curr_philosopher, RED, "has died ajajajajajajajajajajajajajajajajajajajajajajajaja", RESET);
 			pthread_mutex_unlock(&curr_philosopher->restrictions->mutex.death);
 			break ;
 		}
 		current_seat = current_seat->next;
 	}
-	// aqui no deberia ir algo para evitar que siga escribiendo despues de la muerte?? o algo para terminar los threads?
+	control_eating(num_philosophers, curr_philosopher);
+}
+
+void
+control_eating(int num_philosophers, const t_philosopher *curr_philosopher) {
 	if (curr_philosopher->restrictions->eat_control_counter >= num_philosophers)
 	{
 		usleep(100);
