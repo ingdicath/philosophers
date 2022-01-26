@@ -1,13 +1,21 @@
-#
-# Created by dsalaman on 08/07/2021.
-#
+# **************************************************************************** #
+#                                                                              #
+#                                                         ::::::::             #
+#    Makefile                                           :+:    :+:             #
+#                                                      +:+                     #
+#    By: dsalaman <dsalaman@student.codam.nl>         +#+                      #
+#                                                    +#+                       #
+#    Created: 2022/01/26 08:09:08 by dsalaman      #+#    #+#                  #
+#    Updated: 2022/01/26 08:09:14 by dsalaman      ########   odam.nl          #
+#                                                                              #
+# **************************************************************************** #
 
 NAME := philo
 OBJ_DIR := obj/
 SRC_DIR := src/
 INC_DIR := includes/
 CFLAGS := -Wall -Wextra -Werror
-SRC := main.c utils.c setup_args.c clean.c actions.c time_functions.c \
+SRC := main.c utils.c setup_args.c cleaning.c actions.c time_functions.c \
 		simulation.c
 SRC_PATH:= $(addprefix $(SRC_DIR), $(SRC))
 OBJS := $(SRC_PATH:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)

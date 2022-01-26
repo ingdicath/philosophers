@@ -6,11 +6,23 @@
 /*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/09/11 14:01:00 by dsalaman      #+#    #+#                 */
-/*   Updated: 2021/09/11 16:42:56 by dsalaman      ########   odam.nl         */
+/*   Updated: 2022/01/26 08:08:47 by dsalaman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
+
+static void	disable_threads(t_table *table, int num_philosophers)
+{
+	int		i;
+
+	i = 0;
+	while (i < num_philosophers)
+	{
+		pthread_detach(table->seats->philosopher->thread);
+		i++;
+	}
+}
 
 /*
  * seat => One philosopher + one fork.
@@ -22,11 +34,10 @@ void	*run_simulation(void *arg)
 
 	seat = arg;
 	philosopher = seat->philosopher;
-//	usleep((philosopher->id % 2) * 100000);
 	if (philosopher->id % 2 != 0)
 	{
-		print_status(philosopher, CYAN,"is thinking", RESET);// new
-		action_time(philosopher->restrictions->time_to_eat /2); //new
+		print_status(philosopher, CYAN, "is thinking", RESET);// new
+		action_time(philosopher->restrictions->time_to_eat / 2); //new
 	}
 	while (philosopher->status != DIED)
 	{
@@ -46,6 +57,7 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 {
 	t_seat			*current_seat;
 	t_philosopher	*curr_philosopher;
+	unsigned long	dead_time;
 
 	current_seat = table->seats;
 	curr_philosopher = current_seat->philosopher;
@@ -53,27 +65,28 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 		< num_philosophers)
 	{
 		curr_philosopher = current_seat->philosopher;
-		unsigned long deadT=  curr_philosopher->eating_start_time + curr_philosopher->restrictions->time_to_die;
-
-		if (deadT < get_time_millisec())
+		dead_time = curr_philosopher->eating_start_time + curr_philosopher->restrictions->time_to_die;
+//		if ((get_time_millisec() - curr_philosopher->eating_start_time) >= (unsigned long)curr_philosopher->restrictions->time_to_die)
+		if (dead_time < get_time_millisec())
 		{
 			pthread_mutex_lock(&curr_philosopher->restrictions->mutex.death);
+//			printf("hora muerte %lu %lu", dead_time, get_time_millisec()); //quitar
 			curr_philosopher->status = DIED;
-			printf("hora muerte %lu %lu", deadT, get_time_millisec());
 			print_status(curr_philosopher, RED, "has died ajajajajajajajajajajajajajajajajajajajajajajajaja", RESET);
 			usleep(100);
 			pthread_mutex_unlock(&curr_philosopher->restrictions->mutex.death);
+			disable_threads(table, num_philosophers); //new 26jan
 			break ;
 		}
-//		usleep(400); //new
+		usleep(400); //new
 		current_seat = current_seat->next;
 	}
-	control_eating(num_philosophers, curr_philosopher);
+	eating_control(num_philosophers, curr_philosopher);
 }
 
-void	control_eating(int num_philosophers, const t_philosopher *curr_philosopher)
+void	eating_control(int num_philos, const t_philosopher *curr_philosopher)
 {
-	if (curr_philosopher->restrictions->eat_control_counter >= num_philosophers)
+	if (curr_philosopher->restrictions->eat_control_counter >= num_philos)
 	{
 		usleep(100);
 		pthread_mutex_lock(&curr_philosopher->restrictions->mutex.write);

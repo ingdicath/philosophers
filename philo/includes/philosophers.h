@@ -6,7 +6,7 @@
 /*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/10/06 16:09:24 by dsalaman      #+#    #+#                 */
-/*   Updated: 2021/10/06 16:15:55 by dsalaman      ########   odam.nl         */
+/*   Updated: 2022/01/26 08:08:01 by dsalaman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ typedef struct s_mutex
 {
 	pthread_mutex_t		write;
 	pthread_mutex_t		death;
-
 }				t_mutex;
 
 typedef struct s_restrictions
@@ -52,7 +51,7 @@ typedef struct s_restrictions
 	int					times_must_eat;
 	int					eat_control_counter;
 	unsigned long		simulation_start_time;
-	t_mutex				mutex; //revisar este nombre de variable
+	t_mutex				mutex;
 }				t_restrictions;
 
 typedef struct s_philosopher
@@ -65,7 +64,6 @@ typedef struct s_philosopher
 	t_restrictions		*restrictions;
 }				t_philosopher;
 
-// circular single linked list
 typedef struct s_seat
 {
 	t_philosopher		*philosopher;
@@ -104,14 +102,13 @@ void			go_to_eat(t_philosopher *philo,
 void			go_to_sleep(t_philosopher *philosopher);
 void			go_to_think(t_philosopher *philosopher);
 void			print_status(t_philosopher *philosopher, char *start_color,
-					 char *message, char *reset_color);
+					char *message, char *reset_color);
 int				build_philosopher_table(t_restrictions *input, t_table *table,
 					int seats_amount);
 void			check_philosopher_status(t_table *table, int num_philosophers);
-void			control_eating(int num_philosophers,
-					const t_philosopher *curr_philosopher);
+void			eating_control(int num_philos,
+							   const t_philosopher *curr_philosopher);
 unsigned long	get_time_millisec(void);
-void			fix_sleep_accuracy(unsigned long time_to_sleep);
 void			action_time(int action_time);
 
 /**

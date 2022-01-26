@@ -6,7 +6,7 @@
 /*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/10/06 14:55:38 by dsalaman      #+#    #+#                 */
-/*   Updated: 2021/10/06 16:31:42 by dsalaman      ########   odam.nl         */
+/*   Updated: 2022/01/26 08:08:35 by dsalaman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ t_seat	*add_philosopher(t_seat **head, t_philosopher *philosopher)
  * Creating the table. A table has a certain amount of seats.
  */
 int	build_philosopher_table(t_restrictions *input, t_table *table,
-		int seats_amount) //faltaria incluir validacion en caso que add philosopher falle?
+		int seats_amount)
 {
 	int				i;
 	unsigned long	initial_time;
@@ -119,12 +119,3 @@ int	main(int argc, char **argv)
 	clean_table(table.seats, number_of_philosophers);
 	return (0);
 }
-
-/*
- * Tengo que limpiar:
- * 1. philosopher
- * 2. seat
- * 3. destroy mutex del fork
- * 4. destroy mutex de death
- * 5. destroy mutex de write
- */

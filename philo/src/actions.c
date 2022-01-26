@@ -6,7 +6,7 @@
 /*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/10/06 14:34:54 by dsalaman      #+#    #+#                 */
-/*   Updated: 2021/10/07 08:54:41 by dsalaman      ########   odam.nl         */
+/*   Updated: 2022/01/26 08:08:23 by dsalaman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	take_forks(t_philosopher *philosopher, pthread_mutex_t *left_fork,
 	pthread_mutex_lock(right_fork);
 	print_status(philosopher, ORANGE, "has taken right fork", RESET);
 	philosopher->status = WITH_FORKS;
-//	usleep(10000); //new
+	usleep(100); //new
 }
 
 void	go_to_eat(t_philosopher *philo, pthread_mutex_t *left_fork,
@@ -41,7 +41,6 @@ void	go_to_eat(t_philosopher *philo, pthread_mutex_t *left_fork,
 	philo->eating_start_time = get_time_millisec();
 	print_status(philo, GREEN, "is eating", RESET);
 	action_time(philo->restrictions->time_to_eat);
-
 	if (philo->restrictions->times_must_eat != -1)
 		philo->eating_counter++;
 	if (philo->restrictions->times_must_eat == philo->eating_counter)
@@ -60,6 +59,6 @@ void	go_to_sleep(t_philosopher *philosopher)
 
 void	go_to_think(t_philosopher *philosopher)
 {
-	print_status(philosopher, CYAN,"is thinking", RESET);
+	print_status(philosopher, CYAN, "is thinking", RESET);
 	philosopher->status = THINKING;
 }

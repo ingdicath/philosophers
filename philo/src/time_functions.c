@@ -6,7 +6,7 @@
 /*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/10/06 14:56:52 by dsalaman      #+#    #+#                 */
-/*   Updated: 2021/10/06 14:57:02 by dsalaman      ########   odam.nl         */
+/*   Updated: 2022/01/26 08:08:53 by dsalaman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,5 @@ void	action_time(int action_time)
 
 	start_sleep = get_time_millisec();
 	while ((get_time_millisec() - start_sleep) < (unsigned)action_time)
-		usleep(1000);
+		usleep(100);
 }
