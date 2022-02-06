@@ -89,7 +89,7 @@ int	build_philosopher_table(t_restrictions *input, t_table *table,
 	input->simulation_start_time = initial_time;
 	while (i <= seats_amount)
 	{
-		philosopher = create_philosopher(i, input, initial_time);
+		philosopher = create_philosopher(i, input, initial_time); // revisar si debe iniciar con el mismo tiempo
 		current_seat = add_philosopher(&table->seats, philosopher);
 		if (pthread_create(&philosopher->thread, NULL, run_simulation,
 				current_seat) != 0)

@@ -61,6 +61,7 @@ typedef struct s_philosopher
 	unsigned long		eating_start_time;
 	pthread_t			thread;
 	t_status			status;
+	pthread_mutex_t		write;
 	t_restrictions		*restrictions;
 }				t_philosopher;
 
