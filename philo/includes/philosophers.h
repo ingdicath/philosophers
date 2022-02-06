@@ -37,6 +37,13 @@ typedef enum e_status
 	WITH_FORKS,
 }	t_status;
 
+typedef enum e_fork_state
+{
+	BORROWED,
+	TAKEN,
+	FREE,
+}	t_fork_state;
+
 typedef struct s_mutex
 {
 	pthread_mutex_t		write;
@@ -61,7 +68,6 @@ typedef struct s_philosopher
 	unsigned long		eating_start_time;
 	pthread_t			thread;
 	t_status			status;
-	pthread_mutex_t		write;
 	t_restrictions		*restrictions;
 }				t_philosopher;
 
@@ -69,6 +75,7 @@ typedef struct s_seat
 {
 	t_philosopher		*philosopher;
 	pthread_mutex_t		fork;
+	t_fork_state 		fork_state;//revisar si debe ser apuntador
 	struct s_seat		*next;
 }	t_seat;
 
@@ -80,7 +87,7 @@ typedef struct s_table
 /**
  * ------------------------- parsing ------------------------------
  */
-int				print_error(char *str);
+
 int				extract_arg(char *arg);
 int				check_args(t_restrictions input, int number_of_philosophers,
 					int check_times_to_eat);
@@ -96,10 +103,8 @@ t_philosopher	*create_philosopher(int id, t_restrictions *restrictions,
 t_seat			*create_seat(t_philosopher *philosopher);
 t_seat			*add_philosopher(t_seat **head, t_philosopher *philosopher);
 void			*run_simulation(void *arg);
-void			take_forks(t_philosopher *philosopher,
-					pthread_mutex_t *left_fork, pthread_mutex_t *right_fork);
-void			go_to_eat(t_philosopher *philo,
-					pthread_mutex_t *left_fork, pthread_mutex_t *right_fork);
+void			take_forks(t_seat *seat);
+void			go_to_eat(t_seat *seat);
 void			go_to_sleep(t_philosopher *philosopher);
 void			go_to_think(t_philosopher *philosopher);
 void			print_status(t_philosopher *philosopher, char *start_color,
@@ -108,7 +113,7 @@ int				build_philosopher_table(t_restrictions *input, t_table *table,
 					int seats_amount);
 void			check_philosopher_status(t_table *table, int num_philosophers);
 void			eating_control(int num_philos,
-							   const t_philosopher *curr_philosopher);
+					const t_philosopher *curr_philosopher);
 unsigned long	get_time_millisec(void);
 void			action_time(int action_time);
 
@@ -122,5 +127,4 @@ void			clean_table(t_seat *seat, int number_of_philosophers);
 void			clean_seats(t_seat *seat);
 void			clean_mutexes(t_seat *seat, int num_philosophers);
 int				print_error(char *str);
-
 #endif

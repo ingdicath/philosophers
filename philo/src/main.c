@@ -45,6 +45,7 @@ t_seat	*create_seat(t_philosopher *philosopher)
 		return (NULL);
 	}
 	new_seat->philosopher = philosopher;
+	new_seat->fork_state = FREE;
 	pthread_mutex_init(&new_seat->fork, NULL);
 	new_seat->next = NULL;
 	new_seat->next = NULL;
@@ -91,6 +92,7 @@ int	build_philosopher_table(t_restrictions *input, t_table *table,
 	{
 		philosopher = create_philosopher(i, input, initial_time); // revisar si debe iniciar con el mismo tiempo
 		current_seat = add_philosopher(&table->seats, philosopher);
+
 		if (pthread_create(&philosopher->thread, NULL, run_simulation,
 				current_seat) != 0)
 			return (FAILURE);

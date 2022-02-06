@@ -20,10 +20,13 @@ unsigned long	get_time_millisec(void)
 	return (current_time.tv_sec * 1000 + current_time.tv_usec / 1000);
 }
 
+/**
+ * Sleep the thread in intervals of 100 microsec until reach the milliseconds needed.
+ */
 void	action_time(int action_time)
 {
 	unsigned long	start_sleep;
-//	action_time *= 1000; //new 28Jan
+
 	start_sleep = get_time_millisec();
 	while ((get_time_millisec() - start_sleep) < (unsigned)action_time)
 		usleep(100);

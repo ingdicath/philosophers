@@ -38,19 +38,22 @@ void	*run_simulation(void *arg)
 	{
 		print_status(philosopher, CYAN, "is thinking", RESET);// new
 //		usleep(20000);
-		action_time(philosopher->restrictions->time_to_eat/2); //new
+		action_time(philosopher->restrictions->time_to_eat / 2); //new
 	}
-	pthread_mutex_t left_fork = seat->fork;
-	pthread_mutex_t right_fork = seat->next->fork;
+//	pthread_mutex_t* left_fork = &seat->fork;
+//	pthread_mutex_t* right_fork = &seat->next->fork;
 
-	while (1)
+	while (philosopher->status != DIED)
 	{
-		take_forks(philosopher, &left_fork, &right_fork);
-		go_to_eat(philosopher, &left_fork, &right_fork);
-		go_to_sleep(philosopher);
-		go_to_think(philosopher);
-		if (philosopher->status == DIED)
-			break;
+		if (philosopher->status == THINKING)
+			take_forks(seat);
+		else if (philosopher->status == WITH_FORKS)
+			go_to_eat(seat);
+		else if (philosopher->status == EATING)
+			go_to_sleep(philosopher);
+		else if (philosopher->status == SLEEPING)
+			go_to_think(philosopher);
+
 	}
 	return (NULL);
 }
@@ -80,8 +83,6 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 	unsigned long	dead_time;
 	unsigned long	time;
 
-
-
 	current_seat = table->seats;
 	curr_philosopher = current_seat->philosopher;
 	while (current_seat && curr_philosopher->restrictions->eat_control_counter
@@ -106,9 +107,8 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 			break ;
 		}
 
-		 //new
 		current_seat = current_seat->next;
-//		usleep(10000); // funciona con 10000
+//		usleep(10000); //estaba funcionando con 10000
 
 
 	}

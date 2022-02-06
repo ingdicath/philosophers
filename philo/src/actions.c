@@ -24,59 +24,76 @@ void	print_status(t_philosopher *philosopher, char *start_color,
 	pthread_mutex_unlock(&philosopher->restrictions->mutex.write);
 }
 
-void	take_forks(t_philosopher *philosopher, pthread_mutex_t *left_fork,
-		pthread_mutex_t *right_fork)
-{
-	if (philosopher->status != THINKING)
-		return;
+/**
+ *lock to change status only
+ */
 
+void	take_forks(t_seat *seat)
+{
+	pthread_mutex_t *left_fork = &seat->fork;
+	t_fork_state * left_state= &seat->fork_state;
+	t_philosopher *philosopher = seat->philosopher;
+	pthread_mutex_t *right_fork = &seat->next->fork;
+	t_fork_state * right_state= &seat->next->fork_state;
 	pthread_mutex_lock(left_fork);
-	print_status(philosopher, ORANGE, "has taken left fork", RESET);
-	pthread_mutex_lock(right_fork);
-	print_status(philosopher, ORANGE, "has taken right fork", RESET);
-	philosopher->status = WITH_FORKS;
+
+	while (*right_state != BORROWED && *left_state != TAKEN )
+	{
+		if (*left_state == FREE)
+		{
+			*left_state = TAKEN;
+			print_status(philosopher, ORANGE, "has taken left fork", RESET);
+		}
+		pthread_mutex_unlock(left_fork);
+		pthread_mutex_lock(right_fork);
+		if (*right_state == FREE)
+		{
+			*right_state = BORROWED;
+			print_status(philosopher, ORANGE, "has taken right fork", RESET);
+		}
+		pthread_mutex_unlock(right_fork);
+	}
+	if (seat->next != seat)
+		philosopher->status = WITH_FORKS;
 }
 
-void	go_to_eat(t_philosopher *philo, pthread_mutex_t *left_fork,
-		pthread_mutex_t *right_fork)
+void	go_to_eat(t_seat *seat)
 {
-	print_status(philo, GREEN, "is eating", RESET);
-	if (philo->eating_counter != 0)
-		philo->eating_start_time = get_time_millisec();
+	pthread_mutex_t *left_fork = &seat->fork;
+	t_fork_state *left_state = &seat->fork_state;
+	t_philosopher *philo = seat->philosopher;
+
+	pthread_mutex_t *right_fork = &seat->next->fork;
+	t_fork_state * right_state= &seat->next->fork_state;
 	philo->status = EATING;
+
+	print_status(philo, GREEN, "is eating", RESET);
+	philo->eating_start_time = get_time_millisec();
 	action_time(philo->restrictions->time_to_eat);
 
-	pthread_mutex_unlock(right_fork);
-//	usleep(500); // funciona con 500
+	pthread_mutex_lock(left_fork);
+	*left_state = FREE;
 	pthread_mutex_unlock(left_fork);
 
-	//usleep(500); //new
-	//if (philo->restrictions->times_must_eat != -1)
-	philo->eating_counter++;
-	if (philo->restrictions->times_must_eat != -1 && philo->restrictions->times_must_eat == philo->eating_counter) // revisar si toca eliminar
+	pthread_mutex_lock(right_fork);
+	*right_state = FREE;
+	pthread_mutex_unlock(right_fork);
+	if (philo->restrictions->times_must_eat != -1)
+		philo->eating_counter++;
+	if (philo->restrictions->times_must_eat == philo->eating_counter)
 		philo->restrictions->eat_control_counter++;
-//	pthread_mutex_lock(&philo->restrictions->mutex.death);
-
-
-	//pthread_mutex_unlock(&philo->restrictions->mutex.death);
 }
+
 
 void	go_to_sleep(t_philosopher *philosopher)
 {
 	print_status(philosopher, PURPLE, "is sleeping", RESET);
-	philosopher->status = SLEEPING;
 	action_time(philosopher->restrictions->time_to_sleep);
-	//pthread_mutex_lock(&philosopher->restrictions->mutex.death);
-
-	//usleep(100); //new
-	//pthread_mutex_unlock(&philosopher->restrictions->mutex.death);
+	philosopher->status = SLEEPING;
 }
 
 void	go_to_think(t_philosopher *philosopher)
 {
 	print_status(philosopher, CYAN, "is thinking", RESET);
-//	pthread_mutex_lock(&philosopher->restrictions->mutex.death);
 	philosopher->status = THINKING;
-	//usleep(100); //new
-//	pthread_mutex_unlock(&philosopher->restrictions->mutex.death);
 }
