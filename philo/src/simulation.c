@@ -36,13 +36,12 @@ void	*run_simulation(void *arg)
 	philosopher = seat->philosopher;
 	if (philosopher->id % 2 != 0)
 	{
-		print_status(philosopher, CYAN, "is thinking", RESET);// new
+		print_status(philosopher, CYAN, "is thinking", RESET);
 //		usleep(20000);
-		action_time(philosopher->restrictions->time_to_eat / 2); //new
+		action_time(philosopher->restrictions->time_to_eat / 2);
 	}
 //	pthread_mutex_t* left_fork = &seat->fork;
 //	pthread_mutex_t* right_fork = &seat->next->fork;
-
 	while (philosopher->status != DIED)
 	{
 		if (philosopher->status == THINKING)
@@ -53,7 +52,6 @@ void	*run_simulation(void *arg)
 			go_to_sleep(philosopher);
 		else if (philosopher->status == SLEEPING)
 			go_to_think(philosopher);
-
 	}
 	return (NULL);
 }
@@ -88,11 +86,8 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 	while (current_seat && curr_philosopher->restrictions->eat_control_counter
 		< num_philosophers)
 	{
-
 		curr_philosopher = current_seat->philosopher;
-
 		time = get_time_millisec();
-
 		dead_time = curr_philosopher->eating_start_time + curr_philosopher->restrictions->time_to_die;
 //		if ((get_time_millisec() - curr_philosopher->eating_start_time) >= (unsigned long)curr_philosopher->restrictions->time_to_die)
 		if (dead_time < time)
@@ -103,14 +98,10 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 			print_status(curr_philosopher, RED, "has died ajajajajajajajajajajajajajajajajajajajajajajajaja", RESET);
 			//usleep(100);
 			pthread_mutex_unlock(&curr_philosopher->restrictions->mutex.death);
-			//disable_threads(table, num_philosophers); //new 26jan
 			break ;
 		}
-
 		current_seat = current_seat->next;
 //		usleep(10000); //estaba funcionando con 10000
-
-
 	}
 	eating_control(num_philosophers, curr_philosopher);
 }

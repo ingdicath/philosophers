@@ -31,7 +31,7 @@ t_philosopher	*create_philosopher(int id, t_restrictions *restrictions,
 	return (new_philo);
 }
 
-/*
+/**
  * A seat has a philosopher and a fork.
  */
 t_seat	*create_seat(t_philosopher *philosopher)
@@ -52,7 +52,7 @@ t_seat	*create_seat(t_philosopher *philosopher)
 	return (new_seat);
 }
 
-/*
+/**
  * Enqueueing each new element, circular single linked list
  */
 t_seat	*add_philosopher(t_seat **head, t_philosopher *philosopher)
@@ -92,7 +92,6 @@ int	build_philosopher_table(t_restrictions *input, t_table *table,
 	{
 		philosopher = create_philosopher(i, input, initial_time); // revisar si debe iniciar con el mismo tiempo
 		current_seat = add_philosopher(&table->seats, philosopher);
-
 		if (pthread_create(&philosopher->thread, NULL, run_simulation,
 				current_seat) != 0)
 			return (FAILURE);

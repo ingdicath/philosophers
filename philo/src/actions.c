@@ -30,14 +30,19 @@ void	print_status(t_philosopher *philosopher, char *start_color,
 
 void	take_forks(t_seat *seat)
 {
-	pthread_mutex_t *left_fork = &seat->fork;
-	t_fork_state * left_state= &seat->fork_state;
-	t_philosopher *philosopher = seat->philosopher;
-	pthread_mutex_t *right_fork = &seat->next->fork;
-	t_fork_state * right_state= &seat->next->fork_state;
-	pthread_mutex_lock(left_fork);
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+	t_fork_state	*left_state;
+	t_fork_state	*right_state;
+	t_philosopher	*philosopher;
 
-	while (*right_state != BORROWED && *left_state != TAKEN )
+	left_fork = &seat->fork;
+	right_fork = &seat->next->fork;
+	left_state = &seat->fork_state;
+	right_state = &seat->next->fork_state;
+	philosopher = seat->philosopher;
+	pthread_mutex_lock(left_fork);
+	while (*right_state != BORROWED && *left_state != TAKEN)
 	{
 		if (*left_state == FREE)
 		{
@@ -59,22 +64,24 @@ void	take_forks(t_seat *seat)
 
 void	go_to_eat(t_seat *seat)
 {
-	pthread_mutex_t *left_fork = &seat->fork;
-	t_fork_state *left_state = &seat->fork_state;
-	t_philosopher *philo = seat->philosopher;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+	t_fork_state	*left_state;
+	t_fork_state	*right_state;
+	t_philosopher	*philo;
 
-	pthread_mutex_t *right_fork = &seat->next->fork;
-	t_fork_state * right_state= &seat->next->fork_state;
+	left_fork = &seat->fork;
+	right_fork = &seat->next->fork;
+	left_state = &seat->fork_state;
+	right_state = &seat->next->fork_state;
+	philo = seat->philosopher;
 	philo->status = EATING;
-
 	print_status(philo, GREEN, "is eating", RESET);
 	philo->eating_start_time = get_time_millisec();
 	action_time(philo->restrictions->time_to_eat);
-
 	pthread_mutex_lock(left_fork);
 	*left_state = FREE;
 	pthread_mutex_unlock(left_fork);
-
 	pthread_mutex_lock(right_fork);
 	*right_state = FREE;
 	pthread_mutex_unlock(right_fork);
@@ -83,7 +90,6 @@ void	go_to_eat(t_seat *seat)
 	if (philo->restrictions->times_must_eat == philo->eating_counter)
 		philo->restrictions->eat_control_counter++;
 }
-
 
 void	go_to_sleep(t_philosopher *philosopher)
 {

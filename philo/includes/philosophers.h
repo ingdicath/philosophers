@@ -20,7 +20,6 @@
 # include <sys/time.h>
 # define RED "\033[0;31m"
 # define GREEN "\033[0;32m"
-# define YELLOW "\033[0;33m"
 # define PURPLE "\033[0;35m"
 # define CYAN "\033[0;36m"
 # define RESET "\033[0m"
@@ -75,7 +74,7 @@ typedef struct s_seat
 {
 	t_philosopher		*philosopher;
 	pthread_mutex_t		fork;
-	t_fork_state 		fork_state;//revisar si debe ser apuntador
+	t_fork_state		fork_state;//revisar si debe ser apuntador
 	struct s_seat		*next;
 }	t_seat;
 
