@@ -38,8 +38,8 @@ typedef enum e_status
 
 typedef enum e_fork_state
 {
-	BORROWED,
-	TAKEN,
+	AS_RIGHT,
+	AS_LEFT,
 	FREE,
 }	t_fork_state;
 

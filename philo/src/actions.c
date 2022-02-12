@@ -41,24 +41,30 @@ void	take_forks(t_seat *seat)
 	left_state = &seat->fork_state;
 	right_state = &seat->next->fork_state;
 	philosopher = seat->philosopher;
-	pthread_mutex_lock(left_fork);
-	while (*right_state != BORROWED && *left_state != TAKEN)
+
+//	while ( (*left_state == FREE || *left_state == AS_RIGHT)
+//	      && (*right_state == AS_LEFT || *right_state == FREE ))
+	while (*left_state != AS_LEFT || *right_state != AS_RIGHT)
 	{
+
 		if (*left_state == FREE)
 		{
-			*left_state = TAKEN;
+			pthread_mutex_lock(left_fork);
+			*left_state = AS_LEFT;
+			pthread_mutex_unlock(left_fork);
 			print_status(philosopher, ORANGE, "has taken left fork", RESET);
 		}
-		pthread_mutex_unlock(left_fork);
-		pthread_mutex_lock(right_fork);
+
 		if (*right_state == FREE)
 		{
-			*right_state = BORROWED;
+			pthread_mutex_lock(right_fork);
+			*right_state = AS_RIGHT;
+			pthread_mutex_unlock(right_fork);
 			print_status(philosopher, ORANGE, "has taken right fork", RESET);
 		}
-		pthread_mutex_unlock(right_fork);
+
 	}
-	if (seat->next != seat)
+	if (*left_state == AS_LEFT && *right_state == AS_RIGHT)
 		philosopher->status = WITH_FORKS;
 }
 
@@ -76,15 +82,18 @@ void	go_to_eat(t_seat *seat)
 	right_state = &seat->next->fork_state;
 	philo = seat->philosopher;
 	philo->status = EATING;
-	print_status(philo, GREEN, "is eating", RESET);
 	philo->eating_start_time = get_time_millisec();
+	print_status(philo, GREEN, "is eating", RESET);
 	action_time(philo->restrictions->time_to_eat);
+
 	pthread_mutex_lock(left_fork);
 	*left_state = FREE;
 	pthread_mutex_unlock(left_fork);
+//	usleep(100);
 	pthread_mutex_lock(right_fork);
 	*right_state = FREE;
 	pthread_mutex_unlock(right_fork);
+
 	if (philo->restrictions->times_must_eat != -1)
 		philo->eating_counter++;
 	if (philo->restrictions->times_must_eat == philo->eating_counter)
@@ -102,4 +111,5 @@ void	go_to_think(t_philosopher *philosopher)
 {
 	print_status(philosopher, CYAN, "is thinking", RESET);
 	philosopher->status = THINKING;
+//	usleep(10000);
 }
