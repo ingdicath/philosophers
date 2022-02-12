@@ -12,17 +12,6 @@
 
 #include "../includes/philosophers.h"
 
-//static void	disable_threads(t_table *table, int num_philosophers)
-//{
-//	int		i;
-//
-//	i = 0;
-//	while (i < num_philosophers)
-//	{
-//		pthread_detach(table->seats->philosopher->thread);
-//		i++;
-//	}
-//}
 void	go_to_eat2(t_philosopher	*philo,
 
 	pthread_mutex_t	*left_fork,
@@ -43,7 +32,6 @@ void	go_to_eat2(t_philosopher	*philo,
 	pthread_mutex_lock(left_fork);
 	*left_state = FREE;
 	pthread_mutex_unlock(left_fork);
-//	usleep(100);
 	pthread_mutex_lock(right_fork);
 	*right_state = FREE;
 	pthread_mutex_unlock(right_fork);
@@ -58,12 +46,12 @@ t_fork_state	*right_state
 )
 {
 
-	while (1)
-	{
+//	while (1)
+//	{
 		pthread_mutex_lock(left_fork);
 		if (*left_state == FREE)
 		{
-			*left_state = AS_LEFT;
+			*left_state = LEFT;
 			print_status(philosopher, ORANGE, "has taken left fork", RESET);
 		}
 		pthread_mutex_unlock(left_fork);
@@ -71,17 +59,17 @@ t_fork_state	*right_state
 		pthread_mutex_lock(right_fork);
 		if (*right_state == FREE)
 		{
-			*right_state = AS_RIGHT;
+			*right_state = RIGHT;
 			print_status(philosopher, ORANGE, "has taken right fork", RESET);
 		}
 		pthread_mutex_unlock(right_fork);
 
-		if (*left_state == AS_LEFT && *right_state == AS_RIGHT){
+		if (*left_state == LEFT && *right_state == RIGHT){
 			philosopher->status = WITH_FORKS;
-			break;
+//			break;
 		}
 		usleep(100);
-	}
+//	}
 
 }
 /*
@@ -98,11 +86,8 @@ void	*run_simulation(void *arg)
 	{
 		print_status(philosopher, CYAN, "is thinking", RESET);
 //		usleep(20000);
-		action_time(philosopher->restrictions->time_to_eat / 2);
+		action_time(200);
 	}
-//	pthread_mutex_t* left_fork = &seat->fork;
-//	pthread_mutex_t* right_fork = &seat->next->fork;
-
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	t_fork_state	*left_state;
@@ -128,35 +113,18 @@ void	*run_simulation(void *arg)
 	return (NULL);
 }
 
-//int	monitor_meals(t_table *table *philo, int philosophers, pthread_t *threads)
-//{
-//	int	i;
-//
-//	i = 0;
-//	while (i < philosophers)
-//	{
-//		if (philo[i].meals_eaten < philo->data->meals)
-//			return (0);
-//		i++;
-//	}
-//	philo->data->shutdown = true;
-//	usleep(500);
-//	shutdown_threads(threads, philosophers);
-//	final_cleanup(philo, threads);
-//	return (1);
-//}
-
 void	check_philosopher_status(t_table *table, int num_philosophers)
 {
 	t_seat			*current_seat;
 	t_philosopher	*curr_philosopher;
 	unsigned long	dead_time;
 	unsigned long	time;
-
+	int control_counter = 0;
 	current_seat = table->seats;
 	curr_philosopher = current_seat->philosopher;
-	while (current_seat && curr_philosopher->restrictions->eat_control_counter
-		< num_philosophers)
+	while (current_seat)
+//	&& curr_philosopher->restrictions->eat_control_counter
+//		< num_philosophers)
 	{
 		curr_philosopher = current_seat->philosopher;
 		time = get_time_millisec();
@@ -165,17 +133,34 @@ void	check_philosopher_status(t_table *table, int num_philosophers)
 		if (dead_time < time)
 		{
 			pthread_mutex_lock(&curr_philosopher->restrictions->mutex.death);
-			printf("\n\nhora muerte %lu %lu %lu\n\n", dead_time, time, time-dead_time); //quitar
+			//printf("\n\nhora muerte %lu %lu %lu\n\n", dead_time, time, time-dead_time); //quitar
 			curr_philosopher->status = DIED;
+			usleep(500);
 			print_status(curr_philosopher, RED, "has died ajajajajajajajajajajajajajajajajajajajajajajajaja", RESET);
-			//usleep(100);
 			pthread_mutex_unlock(&curr_philosopher->restrictions->mutex.death);
 			break ;
 		}
+		if (curr_philosopher->eating_counter >= curr_philosopher->restrictions->times_must_eat
+		&& curr_philosopher->restrictions->times_must_eat != -1)
+			control_counter++;
+		else
+			control_counter = 0;
+		if (control_counter == num_philosophers)
+			break;
+//		eating_control(num_philosophers, curr_philosopher);
 		current_seat = current_seat->next;
-		//usleep(10000); //estaba funcionando con 10000
 	}
-	eating_control(num_philosophers, curr_philosopher);
+	for(int i = 0 ; i< num_philosophers; i++){
+		curr_philosopher->status = STOP;
+	}
+	if (control_counter == num_philosophers)
+	{
+		usleep(500);
+		pthread_mutex_lock(&curr_philosopher->restrictions->mutex.write);
+		printf("All philosophers have eaten enough.\n");
+		pthread_mutex_unlock(&curr_philosopher->restrictions->mutex.write);
+	}
+
 }
 
 void	eating_control(int num_philos, const t_philosopher *curr_philosopher)

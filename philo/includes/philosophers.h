@@ -30,6 +30,7 @@
 typedef enum e_status
 {
 	DIED,
+	STOP,
 	EATING,
 	SLEEPING,
 	THINKING,
@@ -38,8 +39,8 @@ typedef enum e_status
 
 typedef enum e_fork_state
 {
-	AS_RIGHT,
-	AS_LEFT,
+	RIGHT,
+	LEFT,
 	FREE,
 }	t_fork_state;
 

@@ -16,11 +16,13 @@ void	print_status(t_philosopher *philosopher, char *start_color,
 		char *message, char *reset_color)
 {
 	pthread_mutex_lock(&philosopher->restrictions->mutex.write);
+	if(philosopher->status != STOP){
 	printf("[%lu]\t\t", (get_time_millisec()
 			- philosopher->restrictions->simulation_start_time));
 	printf("[%d]\t", philosopher->id);
 	printf("[%d]\t", philosopher->eating_counter); //quitar
 	printf("%s%s%s\n", start_color, message, reset_color);
+	}
 	pthread_mutex_unlock(&philosopher->restrictions->mutex.write);
 }
 
@@ -42,15 +44,15 @@ void	take_forks(t_seat *seat)
 	right_state = &seat->next->fork_state;
 	philosopher = seat->philosopher;
 
-//	while ( (*left_state == FREE || *left_state == AS_RIGHT)
-//	      && (*right_state == AS_LEFT || *right_state == FREE ))
-	while (*left_state != AS_LEFT || *right_state != AS_RIGHT)
+//	while ( (*left_state == FREE || *left_state == RIGHT)
+//	      && (*right_state == LEFT || *right_state == FREE ))
+	while (*left_state != LEFT || *right_state != RIGHT)
 	{
 
 		if (*left_state == FREE)
 		{
 			pthread_mutex_lock(left_fork);
-			*left_state = AS_LEFT;
+			*left_state = LEFT;
 			pthread_mutex_unlock(left_fork);
 			print_status(philosopher, ORANGE, "has taken left fork", RESET);
 		}
@@ -58,13 +60,13 @@ void	take_forks(t_seat *seat)
 		if (*right_state == FREE)
 		{
 			pthread_mutex_lock(right_fork);
-			*right_state = AS_RIGHT;
+			*right_state = RIGHT;
 			pthread_mutex_unlock(right_fork);
 			print_status(philosopher, ORANGE, "has taken right fork", RESET);
 		}
 
 	}
-	if (*left_state == AS_LEFT && *right_state == AS_RIGHT)
+	if (*left_state == LEFT && *right_state == RIGHT)
 		philosopher->status = WITH_FORKS;
 }
 
@@ -96,8 +98,8 @@ void	go_to_eat(t_seat *seat)
 
 	if (philo->restrictions->times_must_eat != -1)
 		philo->eating_counter++;
-	if (philo->restrictions->times_must_eat == philo->eating_counter)
-		philo->restrictions->eat_control_counter++;
+//	if (philo->restrictions->times_must_eat == philo->eating_counter)
+//		philo->restrictions->eat_control_counter++;
 }
 
 void	go_to_sleep(t_philosopher *philosopher)
