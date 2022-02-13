@@ -5,8 +5,8 @@
 /*                                                     +:+                    */
 /*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/10/06 14:56:18 by dsalaman      #+#    #+#                 */
-/*   Updated: 2022/01/26 08:08:40 by dsalaman      ########   odam.nl         */
+/*   Created: 2022/02/12 21:13:12 by diani         #+#    #+#                 */
+/*   Updated: 2022/02/12 21:13:12 by diani         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	parsing(char **argv, t_restrictions *input, int *number_of_philosophers)
 		input->times_must_eat = extract_arg(argv[5]);
 		check_times_to_eat = 1;
 	}
-	input->eat_control_counter = 0;
+	input->allow_write = 1;
 	pthread_mutex_init(&input->mutex.write, NULL);
 	pthread_mutex_init(&input->mutex.death, NULL);
 	return (check_args(*input, *number_of_philosophers, check_times_to_eat));

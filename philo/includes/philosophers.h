@@ -5,8 +5,8 @@
 /*                                                     +:+                    */
 /*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/10/06 16:09:24 by dsalaman      #+#    #+#                 */
-/*   Updated: 2022/01/26 08:08:01 by dsalaman      ########   odam.nl         */
+/*   Created: 2022/02/12 21:11:59 by diani         #+#    #+#                 */
+/*   Updated: 2022/02/12 21:11:59 by diani         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ typedef enum e_fork_state
 typedef struct s_mutex
 {
 	pthread_mutex_t		write;
-	pthread_mutex_t		death;
+	pthread_mutex_t		death; // probablemente sera eliminado
 }				t_mutex;
 
 typedef struct s_restrictions
@@ -56,10 +56,18 @@ typedef struct s_restrictions
 	int					time_to_sleep;
 	int					time_to_die;
 	int					times_must_eat;
-	int					eat_control_counter;
+	int					allow_write;
 	unsigned long		simulation_start_time;
 	t_mutex				mutex;
 }				t_restrictions;
+
+typedef struct s_xxx {
+	pthread_mutex_t *left_fork;
+	pthread_mutex_t *right_fork;
+	t_fork_state *left_state;
+	t_fork_state *right_state;
+}	t_xxx;
+
 
 typedef struct s_philosopher
 {
@@ -69,13 +77,14 @@ typedef struct s_philosopher
 	pthread_t			thread;
 	t_status			status;
 	t_restrictions		*restrictions;
+	t_xxx				*xxx;
 }				t_philosopher;
 
 typedef struct s_seat
 {
 	t_philosopher		*philosopher;
 	pthread_mutex_t		fork;
-	t_fork_state		fork_state;//revisar si debe ser apuntador
+	t_fork_state		fork_state;
 	struct s_seat		*next;
 }	t_seat;
 
@@ -90,7 +99,7 @@ typedef struct s_table
 
 int				extract_arg(char *arg);
 int				check_args(t_restrictions input, int number_of_philosophers,
-					int check_times_to_eat);
+							  int check_times_to_eat);
 void			reset_input(t_restrictions *input);
 int				parsing(char **argv, t_restrictions *input,
 					int *number_of_philosophers);
@@ -103,8 +112,8 @@ t_philosopher	*create_philosopher(int id, t_restrictions *restrictions,
 t_seat			*create_seat(t_philosopher *philosopher);
 t_seat			*add_philosopher(t_seat **head, t_philosopher *philosopher);
 void			*run_simulation(void *arg);
-void			take_forks(t_seat *seat);
-void			go_to_eat(t_seat *seat);
+//void			take_forks(t_seat *seat); // poner las nuevas funciones
+//void			go_to_eat(t_seat *seat);
 void			go_to_sleep(t_philosopher *philosopher);
 void			go_to_think(t_philosopher *philosopher);
 void			print_status(t_philosopher *philosopher, char *start_color,
@@ -112,8 +121,6 @@ void			print_status(t_philosopher *philosopher, char *start_color,
 int				build_philosopher_table(t_restrictions *input, t_table *table,
 					int seats_amount);
 void			check_philosopher_status(t_table *table, int num_philosophers);
-void			eating_control(int num_philos,
-					const t_philosopher *curr_philosopher);
 unsigned long	get_time_millisec(void);
 void			action_time(int action_time);
 
@@ -123,8 +130,8 @@ void			action_time(int action_time);
 int				ft_is_pos_number(char const *str);
 int				ft_iswhitespace(char c);
 int				ft_atoi(const char *str);
-void			clean_table(t_seat *seat, int number_of_philosophers);
 void			clean_seats(t_seat *seat);
-void			clean_mutexes(t_seat *seat, int num_philosophers);
+void			free_all(t_seat *seat);
 int				print_error(char *str);
+void change_philosopher_status(t_philosopher *philo, t_status status);
 #endif

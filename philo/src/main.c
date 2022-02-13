@@ -5,8 +5,8 @@
 /*                                                     +:+                    */
 /*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/10/06 14:55:38 by dsalaman      #+#    #+#                 */
-/*   Updated: 2022/01/26 08:08:35 by dsalaman      ########   odam.nl         */
+/*   Created: 2022/02/12 21:10:39 by diani         #+#    #+#                 */
+/*   Updated: 2022/02/12 21:10:39 by diani         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ t_seat	*create_seat(t_philosopher *philosopher)
 	new_seat->philosopher = philosopher;
 	new_seat->fork_state = FREE;
 	pthread_mutex_init(&new_seat->fork, NULL);
-	new_seat->next = NULL;
 	new_seat->next = NULL;
 	return (new_seat);
 }
@@ -90,7 +89,7 @@ int	build_philosopher_table(t_restrictions *input, t_table *table,
 	input->simulation_start_time = initial_time;
 	while (i <= seats_amount)
 	{
-		philosopher = create_philosopher(i, input, initial_time); // revisar si debe iniciar con el mismo tiempo
+		philosopher = create_philosopher(i, input, initial_time);
 		current_seat = add_philosopher(&table->seats, philosopher);
 		if (pthread_create(&philosopher->thread, NULL, run_simulation,
 				current_seat) != 0)
@@ -116,7 +115,5 @@ int	main(int argc, char **argv)
 		!= SUCCESSFUL)
 		return (print_error("Error building philosophers"));
 	check_philosopher_status(&table, number_of_philosophers);
-	clean_mutexes(table.seats, number_of_philosophers);
-	clean_table(table.seats, number_of_philosophers);
 	return (0);
 }

@@ -5,8 +5,8 @@
 /*                                                     +:+                    */
 /*   By: dsalaman <dsalaman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/10/06 14:56:52 by dsalaman      #+#    #+#                 */
-/*   Updated: 2022/01/26 08:08:53 by dsalaman      ########   odam.nl         */
+/*   Created: 2022/02/12 21:12:25 by diani         #+#    #+#                 */
+/*   Updated: 2022/02/12 21:12:25 by diani         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ unsigned long	get_time_millisec(void)
 }
 
 /**
- * Sleep the thread in intervals of 100 microsec until reach the milliseconds needed.
+ * Sleep the thread in intervals of 100 microsec until reach
+ * the milliseconds needed.
  */
 void	action_time(int action_time)
 {
