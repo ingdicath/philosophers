@@ -11,13 +11,20 @@
 # **************************************************************************** #
 
 NAME := philo
+
 OBJ_DIR := obj/
+
 SRC_DIR := src/
+
 INC_DIR := includes/
+
 CFLAGS := -Wall -Wextra -Werror
+
 SRC := main.c utils.c setup_args.c cleaning.c actions.c time_functions.c \
-		simulation.c
+		simulation.c manage_forks.c
+
 SRC_PATH:= $(addprefix $(SRC_DIR), $(SRC))
+
 OBJS := $(SRC_PATH:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 
 all: $(NAME)

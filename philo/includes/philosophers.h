@@ -18,6 +18,7 @@
 # include <stdio.h>
 # include <limits.h>
 # include <sys/time.h>
+# include <stdbool.h>
 # define RED "\033[0;31m"
 # define GREEN "\033[0;32m"
 # define PURPLE "\033[0;35m"
@@ -30,7 +31,6 @@
 typedef enum e_status
 {
 	DIED,
-	STOP,
 	EATING,
 	SLEEPING,
 	THINKING,
@@ -47,7 +47,7 @@ typedef enum e_fork_state
 typedef struct s_mutex
 {
 	pthread_mutex_t		write;
-	pthread_mutex_t		death; // probablemente sera eliminado
+	pthread_mutex_t		death;
 }				t_mutex;
 
 typedef struct s_restrictions
@@ -61,13 +61,13 @@ typedef struct s_restrictions
 	t_mutex				mutex;
 }				t_restrictions;
 
-typedef struct s_xxx {
-	pthread_mutex_t *left_fork;
-	pthread_mutex_t *right_fork;
-	t_fork_state *left_state;
-	t_fork_state *right_state;
-}	t_xxx;
-
+typedef struct s_fork_reserved
+{
+	pthread_mutex_t		*left_fork;
+	pthread_mutex_t		*right_fork;
+	t_fork_state		*left_state;
+	t_fork_state		*right_state;
+}				t_fork_reserved;
 
 typedef struct s_philosopher
 {
@@ -77,7 +77,6 @@ typedef struct s_philosopher
 	pthread_t			thread;
 	t_status			status;
 	t_restrictions		*restrictions;
-	t_xxx				xxx;
 }				t_philosopher;
 
 typedef struct s_seat
@@ -99,7 +98,7 @@ typedef struct s_table
 
 int				extract_arg(char *arg);
 int				check_args(t_restrictions input, int number_of_philosophers,
-							  int check_times_to_eat);
+					int check_times_to_eat);
 void			reset_input(t_restrictions *input);
 int				parsing(char **argv, t_restrictions *input,
 					int *number_of_philosophers);
@@ -112,17 +111,25 @@ t_philosopher	*create_philosopher(int id, t_restrictions *restrictions,
 t_seat			*create_seat(t_philosopher *philosopher);
 t_seat			*add_philosopher(t_seat **head, t_philosopher *philosopher);
 void			*run_simulation(void *arg);
-//void			take_forks(t_seat *seat); // poner las nuevas funciones
-//void			go_to_eat(t_seat *seat);
+void			take_forks(t_philosopher *philo, t_fork_reserved reserved);
+void			go_to_eat(t_philosopher *philo, t_fork_reserved reserved);
 void			go_to_sleep(t_philosopher *philosopher);
 void			go_to_think(t_philosopher *philosopher);
 void			print_status(t_philosopher *philosopher, char *start_color,
 					char *message, char *reset_color);
 int				build_philosopher_table(t_restrictions *input, t_table *table,
 					int seats_amount);
-void			check_philosopher_status(t_table *table, int num_philosophers);
+void			check_philosopher_status(t_table *table);
 unsigned long	get_time_millisec(void);
 void			action_time(int action_time);
+void			change_philosopher_status(t_philosopher *philo, t_status stat);
+void			change_fork_state(pthread_mutex_t *fork,
+					t_fork_state *fork_state, t_fork_state state);
+void			assign_left_fork(t_fork_reserved *reserved,
+					pthread_mutex_t *fork, t_fork_state *state);
+void			assign_right_fork(t_fork_reserved *reserved,
+					pthread_mutex_t *fork, t_fork_state *state);
+bool			check_enough_meals(t_seat *seat);
 
 /**
  * ------------------ Utils --------------------------------------
@@ -133,10 +140,5 @@ int				ft_atoi(const char *str);
 void			clean_seats(t_seat *seat);
 void			free_all(t_seat *seat);
 int				print_error(char *str);
-void change_philosopher_status(t_philosopher *philo, t_status status);
-void change_fork_status(pthread_mutex_t *fork, t_fork_state *fork_state, t_fork_state state);
 
-void assign_left_fork(t_philosopher *philosopher, pthread_mutex_t *fork, t_fork_state *state);
-
-void assign_right_fork(t_philosopher *philosopher, pthread_mutex_t *fork, t_fork_state *state);
 #endif

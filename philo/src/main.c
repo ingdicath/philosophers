@@ -114,6 +114,6 @@ int	main(int argc, char **argv)
 	if (build_philosopher_table(&restrictions, &table, number_of_philosophers)
 		!= SUCCESSFUL)
 		return (print_error("Error building philosophers"));
-	check_philosopher_status(&table, number_of_philosophers);
+	check_philosopher_status(&table);
 	return (0);
 }
