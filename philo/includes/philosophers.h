@@ -77,7 +77,7 @@ typedef struct s_philosopher
 	pthread_t			thread;
 	t_status			status;
 	t_restrictions		*restrictions;
-	t_xxx				*xxx;
+	t_xxx				xxx;
 }				t_philosopher;
 
 typedef struct s_seat
@@ -134,4 +134,9 @@ void			clean_seats(t_seat *seat);
 void			free_all(t_seat *seat);
 int				print_error(char *str);
 void change_philosopher_status(t_philosopher *philo, t_status status);
+void change_fork_status(pthread_mutex_t *fork, t_fork_state *fork_state, t_fork_state state);
+
+void assign_left_fork(t_philosopher *philosopher, pthread_mutex_t *fork, t_fork_state *state);
+
+void assign_right_fork(t_philosopher *philosopher, pthread_mutex_t *fork, t_fork_state *state);
 #endif

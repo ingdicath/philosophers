@@ -13,13 +13,7 @@
 #include "../includes/philosophers.h"
 
 
-void makeItStop(t_seat *pSeat);
-
-
-
-void go_to_eat(t_philosopher *philo, pthread_mutex_t *left_fork,
-			   pthread_mutex_t *right_fork, t_fork_state *left_state,
-			   t_fork_state *right_state) {
+void go_to_eat(t_philosopher *philo) {
 	change_philosopher_status(philo, EATING);
 
 	philo->eating_start_time = get_time_millisec();
@@ -27,12 +21,15 @@ void go_to_eat(t_philosopher *philo, pthread_mutex_t *left_fork,
 	action_time(philo->restrictions->time_to_eat);
 	if (philo->restrictions->times_must_eat != -1)
 		philo->eating_counter++;
-	pthread_mutex_lock(left_fork);
-	*left_state = FREE;
-	pthread_mutex_unlock(left_fork);
-	pthread_mutex_lock(right_fork);
-	*right_state = FREE;
-	pthread_mutex_unlock(right_fork);
+	change_fork_status(philo->xxx.left_fork, philo->xxx.left_state, FREE);
+	change_fork_status(philo->xxx.right_fork, philo->xxx.right_state, FREE);
+
+}
+
+void change_fork_status(pthread_mutex_t *fork, t_fork_state *fork_state, t_fork_state state) {
+	pthread_mutex_lock(fork);
+	*fork_state = state;
+	pthread_mutex_unlock(fork);
 }
 
 void change_philosopher_status(t_philosopher *philo, t_status status)
@@ -43,24 +40,18 @@ void change_philosopher_status(t_philosopher *philo, t_status status)
 	pthread_mutex_unlock(&philo->restrictions->mutex.death);
 }
 
-void take_forks(t_philosopher *philosopher, pthread_mutex_t *left_fork,
-				pthread_mutex_t *right_fork, t_fork_state *left_state,
-				t_fork_state *right_state) {
+void take_forks(t_philosopher *philosopher) {
 
 	while (philosopher->restrictions->allow_write) {
-		pthread_mutex_lock(left_fork);
-		if (*left_state == FREE) {
-			*left_state = LEFT;
+		if (*philosopher->xxx.left_state == FREE) {
+			change_fork_status(philosopher->xxx.left_fork, philosopher->xxx.left_state, LEFT);
 			print_status(philosopher, ORANGE, "has taken left fork", RESET);
 		}
-		pthread_mutex_unlock(left_fork);
-		pthread_mutex_lock(right_fork);
-		if (*right_state == FREE) {
-			*right_state = RIGHT;
+		if (*philosopher->xxx.right_state == FREE) {
+			change_fork_status(philosopher->xxx.right_fork, philosopher->xxx.right_state, RIGHT);
 			print_status(philosopher, ORANGE, "has taken right fork", RESET);
 		}
-		pthread_mutex_unlock(right_fork);
-		if (*left_state == LEFT && *right_state == RIGHT) {
+		if (*philosopher->xxx.left_state == LEFT && *philosopher->xxx.right_state == RIGHT) {
 			change_philosopher_status(philosopher, WITH_FORKS);
 			break;
 		}
@@ -68,44 +59,27 @@ void take_forks(t_philosopher *philosopher, pthread_mutex_t *left_fork,
 	usleep(100);
 }
 
-//void shutdown_threads(t_seat *current_seat) {
-//	t_philosopher *curr_philosopher;
-//	while (current_seat) {
-//		curr_philosopher = current_seat->philosopher;
-//		pthread_detach(curr_philosopher->thread);
-//		current_seat = current_seat->next;
-//	}
-//}
-
 /**
  * seat => One philosopher + one fork.
  */
-void *run_simulation(void *arg) {
+void *run_simulation(void *arg)
+{
 	t_seat *seat;
 	t_philosopher *philosopher;
-	pthread_mutex_t *left_fork;
-	pthread_mutex_t *right_fork;
-	t_fork_state *left_state;
-	t_fork_state *right_state;
 
 	seat = arg;
 	philosopher = seat->philosopher;
 	if (philosopher->id % 2 != 0) {
 		print_status(philosopher, CYAN, "is thinking", RESET);
 		action_time(philosopher->restrictions->time_to_eat /2);
-
 	}
-	left_fork = &seat->fork;
-	right_fork = &seat->next->fork;
-	left_state = &seat->fork_state;
-	right_state = &seat->next->fork_state;
-	philosopher = seat->philosopher;
-
+	assign_left_fork(philosopher,&seat->fork, &seat->fork_state);
+	assign_right_fork(philosopher,&seat->next->fork, &seat->next->fork_state);
 	while (philosopher->status != DIED) {
 		if (philosopher->status == THINKING)
-			take_forks(philosopher, left_fork, right_fork, left_state, right_state);
+			take_forks(philosopher);
 		else if (philosopher->status == WITH_FORKS)
-			go_to_eat(philosopher, left_fork, right_fork, left_state, right_state);
+			go_to_eat(philosopher);
 		else if (philosopher->status == EATING)
 			go_to_sleep(philosopher);
 		else if (philosopher->status == SLEEPING)
@@ -113,6 +87,17 @@ void *run_simulation(void *arg) {
 	}
 	return (NULL);
 }
+
+void assign_right_fork(t_philosopher *philosopher, pthread_mutex_t *fork, t_fork_state *state) {
+	philosopher->xxx.right_fork = fork;
+	philosopher->xxx.right_state = state;
+}
+
+void assign_left_fork(t_philosopher *philosopher, pthread_mutex_t *fork, t_fork_state *state) {
+	philosopher->xxx.left_fork = fork;
+	philosopher->xxx.left_state = state;
+}
+
 //ciclo infinito sobre main thread
 void check_philosopher_status(t_table *table, int num_philosophers) {
 	t_seat *current_seat;
@@ -156,18 +141,5 @@ void check_philosopher_status(t_table *table, int num_philosophers) {
 	}
 }
 
-void makeItStop(t_seat *seat) {
-	t_seat  *head;
-	head = seat;
-//	printf("estado %d\n", seat->philosopher->status);
-	seat = seat->next;
-	while (seat != head)
-	{
-		seat->philosopher->status = STOP;
-//		printf("estado %d\n", seat->philosopher->status);
-		seat = seat->next;
-	}
-
-}
 
 
