@@ -34,16 +34,15 @@ void	change_philosopher_status(t_philosopher *philo, t_status status)
 	pthread_mutex_unlock(&philo->restrictions->mutex.death);
 }
 
-void	go_to_eat(t_philosopher *philo, t_fork_reserved reserved)
+void	go_to_eat(t_philosopher *philo, t_reservation reservation)
 {
 	change_philosopher_status(philo, EATING);
 	philo->eating_start_time = get_time_millisec();
 	print_status(philo, GREEN, "is eating", RESET);
 	action_time(philo->restrictions->time_to_eat);
-	if (philo->restrictions->times_must_eat != -1)
-		philo->eating_counter++;
-	change_fork_state(reserved.left_fork, reserved.left_state, FREE);
-	change_fork_state(reserved.right_fork, reserved.right_state, FREE);
+	philo->eating_counter++;
+	change_fork_state(reservation.left_fork, reservation.left_state, FREE);
+	change_fork_state(reservation.right_fork, reservation.right_state, FREE);
 }
 
 void	go_to_sleep(t_philosopher *philosopher)

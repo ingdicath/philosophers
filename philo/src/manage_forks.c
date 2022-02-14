@@ -12,27 +12,18 @@
 
 #include "../includes/philosophers.h"
 
-void	take_forks(t_philosopher *philosopher, t_fork_reserved reserved)
+void	reserve_right(t_reservation *reservation, pthread_mutex_t *fork,
+					t_fork_state *state)
 {
-	while (philosopher->restrictions->allow_write)
-	{
-		if (*reserved.left_state == FREE)
-		{
-			change_fork_state(reserved.left_fork, reserved.left_state, LEFT);
-			print_status(philosopher, ORANGE, "has taken left fork", RESET);
-		}
-		if (*reserved.right_state == FREE)
-		{
-			change_fork_state(reserved.right_fork, reserved.right_state, RIGHT);
-			print_status(philosopher, ORANGE, "has taken right fork", RESET);
-		}
-		if (*reserved.left_state == LEFT && *reserved.right_state == RIGHT)
-		{
-			change_philosopher_status(philosopher, WITH_FORKS);
-			break ;
-		}
-		usleep(100);
-	}
+	reservation->right_fork = fork;
+	reservation->right_state = state;
+}
+
+void	reserve_left(t_reservation *reservation, pthread_mutex_t *fork,
+					t_fork_state *state)
+{
+	reservation->left_fork = fork;
+	reservation->left_state = state;
 }
 
 void	change_fork_state(pthread_mutex_t *fork, t_fork_state *fork_state,
@@ -43,16 +34,31 @@ void	change_fork_state(pthread_mutex_t *fork, t_fork_state *fork_state,
 	pthread_mutex_unlock(fork);
 }
 
-void	assign_right_fork(t_fork_reserved *reserved, pthread_mutex_t *fork,
-						t_fork_state *state)
+/**
+ * A philosopher is trying to reserve forks to be able to eat.
+ */
+void	take_forks(t_philosopher *philosopher, t_reservation reservation)
 {
-	reserved->right_fork = fork;
-	reserved->right_state = state;
-}
-
-void	assign_left_fork(t_fork_reserved *reserved, pthread_mutex_t *fork,
-						t_fork_state *state)
-{
-	reserved->left_fork = fork;
-	reserved->left_state = state;
+	while (philosopher->restrictions->allow_write)
+	{
+		if (*reservation.left_state == FREE)
+		{
+			change_fork_state(reservation.left_fork,
+				reservation.left_state, LEFT);
+			print_status(philosopher, ORANGE, "has taken left fork", RESET);
+		}
+		if (*reservation.right_state == FREE)
+		{
+			change_fork_state(reservation.right_fork,
+				reservation.right_state, RIGHT);
+			print_status(philosopher, ORANGE, "has taken right fork", RESET);
+		}
+		if (*reservation.left_state == LEFT
+			&& *reservation.right_state == RIGHT)
+		{
+			change_philosopher_status(philosopher, WITH_FORKS);
+			break ;
+		}
+		usleep(100);
+	}
 }

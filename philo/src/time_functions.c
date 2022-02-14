@@ -12,6 +12,9 @@
 
 #include "../includes/philosophers.h"
 
+/**
+ * Time conversion from seconds and microseconds to milliseconds.
+ */
 unsigned long	get_time_millisec(void)
 {
 	struct timeval	current_time;
@@ -21,7 +24,7 @@ unsigned long	get_time_millisec(void)
 }
 
 /**
- * Sleep the thread in intervals of 100 microsec until reach
+ * Sleep the thread in intervals of 100 microseconds until reach
  * the milliseconds needed.
  */
 void	action_time(int action_time)

@@ -56,7 +56,7 @@ int	parsing(char **argv, t_restrictions *input, int *number_of_philosophers)
 		input->times_must_eat = extract_arg(argv[5]);
 		check_times_to_eat = 1;
 	}
-	input->allow_write = 1;
+	input->allow_write = true;
 	pthread_mutex_init(&input->mutex.write, NULL);
 	pthread_mutex_init(&input->mutex.death, NULL);
 	return (check_args(*input, *number_of_philosophers, check_times_to_eat));

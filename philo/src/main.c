@@ -52,7 +52,7 @@ t_seat	*create_seat(t_philosopher *philosopher)
 }
 
 /**
- * Enqueueing each new element, circular single linked list
+ * Enqueueing each new element or philosopher, circular linked list.
  */
 t_seat	*add_philosopher(t_seat **head, t_philosopher *philosopher)
 {
@@ -74,7 +74,8 @@ t_seat	*add_philosopher(t_seat **head, t_philosopher *philosopher)
 }
 
 /**
- * Creating the table. A table has a certain amount of seats.
+ * Creating the table. The amount of seats is the same to the amount of
+ * philosophers.
  */
 int	build_philosopher_table(t_restrictions *input, t_table *table,
 		int seats_amount)

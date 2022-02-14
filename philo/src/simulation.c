@@ -13,13 +13,13 @@
 #include "../includes/philosophers.h"
 
 /**
- * seat => One philosopher + one fork.
+ * 'reservation' stands for the fork's status: FREE, LEFT or RIGHT
  */
 void	*run_simulation(void *arg)
 {
 	t_seat			*seat;
 	t_philosopher	*philosopher;
-	t_fork_reserved	reserved;
+	t_reservation	reservation;
 
 	seat = arg;
 	philosopher = seat->philosopher;
@@ -28,14 +28,14 @@ void	*run_simulation(void *arg)
 		print_status(philosopher, CYAN, "is thinking", RESET);
 		action_time(philosopher->restrictions->time_to_eat / 2);
 	}
-	assign_left_fork(&reserved, &seat->fork, &seat->fork_state);
-	assign_right_fork(&reserved, &seat->next->fork, &seat->next->fork_state);
+	reserve_left(&reservation, &seat->fork, &seat->fork_state);
+	reserve_right(&reservation, &seat->next->fork, &seat->next->fork_state);
 	while (philosopher->status != DIED)
 	{
 		if (philosopher->status == THINKING)
-			take_forks(philosopher, reserved);
+			take_forks(philosopher, reservation);
 		else if (philosopher->status == WITH_FORKS)
-			go_to_eat(philosopher, reserved);
+			go_to_eat(philosopher, reservation);
 		else if (philosopher->status == EATING)
 			go_to_sleep(philosopher);
 		else if (philosopher->status == SLEEPING)
@@ -45,7 +45,8 @@ void	*run_simulation(void *arg)
 }
 
 /**
- * infinite loop over main thread
+ * Infinite loop over main thread.
+ * Main thread is used to monitoring the philosophers status.
  */
 void	check_philosopher_status(t_table *table)
 {
@@ -60,7 +61,7 @@ void	check_philosopher_status(t_table *table)
 			+ curr_philosopher->restrictions->time_to_die < get_time_millisec())
 		{
 			change_philosopher_status(curr_philosopher, DIED);
-			curr_philosopher->restrictions->allow_write = 0;
+			curr_philosopher->restrictions->allow_write = false;
 			usleep(500);
 			print_status(curr_philosopher, RED, "has died RIP", RESET);
 			clean_seats(current_seat);
@@ -72,6 +73,10 @@ void	check_philosopher_status(t_table *table)
 	}
 }
 
+/**
+ * When 'times_must_eat' parameter is set,
+ * the program checks when the criteria is reached.
+ */
 bool	check_enough_meals(t_seat *seat)
 {
 	t_seat			*head;
@@ -91,7 +96,7 @@ bool	check_enough_meals(t_seat *seat)
 	if (philo->eating_counter < philo->restrictions->times_must_eat)
 		return (false);
 	usleep(500);
-	philo->restrictions->allow_write = 0;
+	philo->restrictions->allow_write = false;
 	clean_seats(seat);
 	printf("All philosophers have eaten enough.\n");
 	return (true);
