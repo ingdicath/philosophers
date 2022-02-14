@@ -31,8 +31,8 @@ void	take_forks(t_philosopher *philosopher, t_fork_reserved reserved)
 			change_philosopher_status(philosopher, WITH_FORKS);
 			break ;
 		}
+		usleep(100);
 	}
-	usleep(100);
 }
 
 void	change_fork_state(pthread_mutex_t *fork, t_fork_state *fork_state,

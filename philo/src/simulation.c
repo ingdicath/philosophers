@@ -90,10 +90,9 @@ bool	check_enough_meals(t_seat *seat)
 	}
 	if (philo->eating_counter < philo->restrictions->times_must_eat)
 		return (false);
-	pthread_mutex_lock(&philo->restrictions->mutex.write);
 	usleep(500);
-	printf("All philosophers have eaten enough.\n");
-	pthread_mutex_unlock(&philo->restrictions->mutex.write);
+	philo->restrictions->allow_write = 0;
 	clean_seats(seat);
+	printf("All philosophers have eaten enough.\n");
 	return (true);
 }
