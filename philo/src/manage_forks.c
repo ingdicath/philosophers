@@ -12,30 +12,24 @@
 
 #include "../includes/philosophers.h"
 
-void	reserve_right(t_reservation *reservation, pthread_mutex_t *fork,
-					t_fork_state *state)
+void	assign_forks(t_reservation *reservation, t_seat *current_seat)
 {
-	reservation->right_fork = fork;
-	reservation->right_state = state;
+	reservation->left_fork = &current_seat->fork;
+	reservation->left_state = &current_seat->fork_state;
+	reservation->right_fork = &current_seat->next->fork;
+	reservation->right_state = &current_seat->next->fork_state;
 }
 
-void	reserve_left(t_reservation *reservation, pthread_mutex_t *fork,
-					t_fork_state *state)
-{
-	reservation->left_fork = fork;
-	reservation->left_state = state;
-}
-
-void	change_fork_state(pthread_mutex_t *fork, t_fork_state *fork_state,
-						t_fork_state state)
+void	change_fork_state(pthread_mutex_t *fork, t_fork_state *current_state,
+						t_fork_state new_state)
 {
 	pthread_mutex_lock(fork);
-	*fork_state = state;
+	*current_state = new_state;
 	pthread_mutex_unlock(fork);
 }
 
 /**
- * A philosopher is trying to reserve forks to be able to eat.
+ * A philosopher has to reserve both, LEFT and RIGHT forks to be able to eat.
  */
 void	take_forks(t_philosopher *philosopher, t_reservation reservation)
 {

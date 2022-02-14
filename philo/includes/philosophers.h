@@ -37,8 +37,8 @@ typedef enum e_status
 }	t_status;
 
 /**
- * A for can be FREE if no philosopher is using it,
- * LEFT and RIGHT if a fork is reservation.
+ * A fork is FREE if no philosopher is using it,
+ * LEFT and RIGHT is set if a fork is reserved.
  * One philosopher needs both RIGHT and LEFT reservation to be able to eat.
  */
 typedef enum e_fork_state
@@ -109,8 +109,7 @@ int				parsing(char **argv, t_restrictions *input,
 /**
  * ----------------------------- philo functions ------------------------------
  */
-t_philosopher	*create_philosopher(int id, t_restrictions *restrictions,
-					unsigned long eating_start_time);
+t_philosopher	*create_philosopher(int id, t_restrictions *restrictions);
 t_seat			*create_seat(t_philosopher *philosopher);
 t_seat			*add_philosopher(t_seat **head, t_philosopher *philosopher);
 int				build_philosopher_table(t_restrictions *input, t_table *table,
@@ -125,11 +124,8 @@ void			print_status(t_philosopher *philosopher, char *start_color,
 void			check_philosopher_status(t_table *table);
 void			change_philosopher_status(t_philosopher *philo, t_status stat);
 void			change_fork_state(pthread_mutex_t *fork,
-					t_fork_state *fork_state, t_fork_state state);
-void			reserve_left(t_reservation *reservation,
-					pthread_mutex_t *fork, t_fork_state *state);
-void			reserve_right(t_reservation *reservation,
-					pthread_mutex_t *fork, t_fork_state *state);
+					t_fork_state *current_state, t_fork_state new_state);
+void			assign_forks(t_reservation *reservation, t_seat *current_seat);
 bool			check_enough_meals(t_seat *seat);
 
 /**

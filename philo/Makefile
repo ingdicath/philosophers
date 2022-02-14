@@ -21,7 +21,7 @@ INC_DIR := includes/
 CFLAGS := -Wall -Wextra -Werror
 
 SRC := main.c utils.c setup_args.c cleaning.c actions.c time_functions.c \
-		simulation.c manage_forks.c
+		simulation.c manage_forks.c setup_philosophers.c
 
 SRC_PATH:= $(addprefix $(SRC_DIR), $(SRC))
 

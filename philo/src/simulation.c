@@ -13,7 +13,9 @@
 #include "../includes/philosophers.h"
 
 /**
- * 'reservation' stands for the fork's status: FREE, LEFT or RIGHT
+ * Simulation per philosopher thread.
+ * A LEFT and RIGHT fork is assigned to a philosopher.
+ * Then an infinite loop runs the simulation until his dead.
  */
 void	*run_simulation(void *arg)
 {
@@ -28,8 +30,7 @@ void	*run_simulation(void *arg)
 		print_status(philosopher, CYAN, "is thinking", RESET);
 		action_time(philosopher->restrictions->time_to_eat / 2);
 	}
-	reserve_left(&reservation, &seat->fork, &seat->fork_state);
-	reserve_right(&reservation, &seat->next->fork, &seat->next->fork_state);
+	assign_forks (&reservation, seat);
 	while (philosopher->status != DIED)
 	{
 		if (philosopher->status == THINKING)
@@ -46,7 +47,7 @@ void	*run_simulation(void *arg)
 
 /**
  * Infinite loop over main thread.
- * Main thread is used to monitoring the philosophers status.
+ * It is used to monitoring each philosopher thread.
  */
 void	check_philosopher_status(t_table *table)
 {
