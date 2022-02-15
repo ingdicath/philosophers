@@ -58,6 +58,8 @@ t_seat	*add_philosopher(t_seat **head, t_philosopher *philosopher)
 	t_seat	*new_seat;
 
 	new_seat = create_seat(philosopher);
+	if (!new_seat)
+		return (NULL);
 	if (*head == NULL)
 	{
 		*head = new_seat;
@@ -83,14 +85,22 @@ int	build_philosopher_table(t_restrictions *input, t_table *table,
 	t_seat			*current_seat;
 
 	i = 1;
+	printf("%stime(ms)\tphilo\taction%s\n", CYAN, RESET);
 	input->simulation_start_time = get_time_millisec();
 	while (i <= seats_amount)
 	{
 		philosopher = create_philosopher(i, input);
+		if (!philosopher)
+			return (FAILURE);
 		current_seat = add_philosopher(&table->seats, philosopher);
+		if (!current_seat)
+			return (FAILURE);
 		if (pthread_create(&philosopher->thread, NULL, run_simulation,
 				current_seat) != 0)
+		{
+			clean_seats(table->seats);
 			return (FAILURE);
+		}
 		i++;
 	}
 	return (SUCCESSFUL);
