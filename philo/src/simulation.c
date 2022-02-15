@@ -31,7 +31,8 @@ void	*run_simulation(void *arg)
 		action_time(philosopher->restrictions->time_to_eat / 2);
 	}
 	assign_forks (&reservation, seat);
-	while (philosopher->status != DIED)
+	while (philosopher->status != DIED
+		&& philosopher->restrictions->allow_write == true)
 	{
 		if (philosopher->status == THINKING)
 			take_forks(philosopher, reservation);
