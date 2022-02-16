@@ -1,3 +1,5 @@
+![](https://github.com/ingdicath/images_md/blob/main/philosophers.png)
+
 # philosophers
 
 CODAM project Curriculum 2019.
@@ -18,43 +20,34 @@ Write the program in C.
 - The philosophers must never be starving and each one needs to eat.
 - Don't speak each other and don't know when other will die.
 - After finished eating, the philosopher will drop his forks and start sleeping, and when finished, will start thinking.
-- Simulation stops when a philosopher dies.
-
-### Allowed functions
-
-`memset`, `printf`, `malloc`, `free`, `write`, `usleep`, `gettimeofday`
-`pthread_create`, `pthread_detach`, `pthread_join`, `pthread_mutex_init`,
-`pthread_mutex_destroy`, `pthread_mutex_lock`, `pthread_mutex_unlock`
----
-
-## Strategy :bulb:
-
+- Simulation stops when a philosopher dies or if all philosophers have eaten at least a certain number of times.
 
 ---
 ## How to build :hammer:
 
-1. Clone the repository and go to folder ```cd philosophers/philo```
-2. Type in the terminal ```make```
+1. Clone the repository ```git clone git@github.com:ingdicath/philosophers.git```
+2. Go to folder ```cd philosophers/philo```
+3. Type in the terminal ```make```
 
-### Usage of _philo_ and _philo_bonus_
+### Usage of _philo_
 
+There are two ways to execute:
 
+1.&ensp;_./philo_&ensp;&ensp;_number_of_philosophers_&ensp;&ensp;_time_to_die_&ensp;&ensp;_time_to_eat_&ensp;&ensp;_time_to_sleep_
+ 
+`./philo 5 800 200 200`
 
-Mandatory
-philosopher with **threads** and **mutex**
+<br>2.&ensp;_./philo_&ensp;&ensp;_number_of_philosophers_&ensp;&ensp;_time_to_die_&ensp;&ensp;_time_to_eat_&ensp;&ensp;_time_to_sleep_&ensp;&ensp;_number_of_times_each_philosopher_must_eat_&ensp;&ensp;
 
-Bonus
-philosopher with **processes** and **semaphore**
+`./philo 5 800 200 200 7`
 
-- https://www.notion.so/philosophers-VM-c60be9c836084edfbcd9c07e29b429c4
-- https://github.com/llefranc/42_philosophers/tree/main/philo_one
-- https://hpc-tutorials.llnl.gov/posix/
-- https://hpc.llnl.gov/training/tutorials/introduction-parallel-computing-tutorial
-- https://www.cs.cmu.edu/afs/cs/academic/class/15492-f07/www/pthreads.html
+----
+## Outputs 😎
+- **Case 1:** Philoshopers don't die.
+<p align="center"><img src="https://github.com/ingdicath/images_md/blob/main/philo_no_die.png" width=35%" height="35%"></p>
+  
+- **Case 2:**  A philoshoper dies.
+<p align="center"><img src="https://github.com/ingdicath/images_md/blob/main/philo_die.png" width="35%" height="35%"></p>
 
-
-Videos
-- [Programming with Threads](https://www.youtube.com/watch?v=uA8X5zNOGw8&list=PL9IEJIKnBJjFZxuqyJ9JqVYmuFZHr7CFM&index=1)
-- [Unix Threads in C - playlist](https://www.youtube.com/watch?v=d9s_d28yJq0)
-## Requirements
-
+- **Case 3:** Philoshoper have eaten a certain number of times.
+<p align="center"><img src="https://github.com/ingdicath/images_md/blob/main/philos_eat_enough.png" width="35%" height="35%"></p>
