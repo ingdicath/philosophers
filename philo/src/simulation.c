@@ -26,10 +26,7 @@ void	*run_simulation(void *arg)
 	seat = arg;
 	philosopher = seat->philosopher;
 	if (philosopher->id % 2 != 0)
-	{
-		print_status(philosopher, CYAN, "is thinking", RESET);
 		action_time(philosopher->restrictions->time_to_eat / 2);
-	}
 	assign_forks (&reservation, seat);
 	while (philosopher->status != DIED
 		&& philosopher->restrictions->allow_write == true)
