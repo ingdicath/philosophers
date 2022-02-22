@@ -57,7 +57,9 @@ int	parsing(char **argv, t_restrictions *input, int *number_of_philosophers)
 		check_times_to_eat = 1;
 	}
 	input->allow_write = true;
-	pthread_mutex_init(&input->mutex.write, NULL);
-	pthread_mutex_init(&input->mutex.death, NULL);
+	if (pthread_mutex_init(&input->mutex.write, NULL))
+		return (FAILURE);
+	if (pthread_mutex_init(&input->mutex.death, NULL))
+		return (FAILURE);
 	return (check_args(*input, *number_of_philosophers, check_times_to_eat));
 }

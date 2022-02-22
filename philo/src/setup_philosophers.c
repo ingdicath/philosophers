@@ -45,7 +45,11 @@ t_seat	*create_seat(t_philosopher *philosopher)
 	}
 	new_seat->philosopher = philosopher;
 	new_seat->fork_state = FREE;
-	pthread_mutex_init(&new_seat->fork, NULL);
+	if (pthread_mutex_init(&new_seat->fork, NULL))
+	{
+		print_error("Error init pthread_mutex");
+		return (NULL);
+	}
 	new_seat->next = NULL;
 	return (new_seat);
 }
